@@ -22,7 +22,7 @@
   "source": {
     "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
     "tag": "v1.0.1",
-    "commit": "d221a309e4695b28d022b79361adbc66bd63b018"
+    "commit": "62ababb9050d24eeecce7ddf0fb2c5ce3cbfd5c0"
   },
   "release": {
     "version": "1.0.1",
