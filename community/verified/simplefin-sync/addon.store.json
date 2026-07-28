@@ -21,20 +21,20 @@
   "supportUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/issues",
   "source": {
     "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
-    "tag": "v1.0.0",
-    "commit": "169d6bf86b0c978b03456031e712c913fd7615bb"
+    "tag": "v1.0.1",
+    "commit": "882bc85fef36d77d6ca8397c49a32bc0a5aa5444"
   },
   "release": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "minWealthfolioVersion": "3.6.2",
     "sdkVersion": "3.6.2",
     "critical": false,
     "breaking": false,
-    "notes": "First public release: transaction import from SimpleFin, one-time starting balances, pending-transaction reconciliation, automatic internal-transfer detection and linking, custom mapping rules, per-account balance drift display with one-click correction, and scheduled auto-sync.",
-    "changelogUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/releases/tag/v1.0.0"
+    "notes": "Transaction import from SimpleFin, one-time starting balances, pending reconciliation, automatic internal-transfer detection, custom mapping rules, balance drift correction, Telegram bot notifications, and native SQLite Spending Tracker budget integration.",
+    "changelogUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/releases/tag/v1.0.1"
   },
   "distribution": {
-    "r2Path": "simplefin-sync/1.0.0/simplefin-sync.zip"
+    "r2Path": "simplefin-sync/1.0.1/simplefin-sync.zip"
   },
   "media": {
     "coverLight": "assets/cover-light.webp",
