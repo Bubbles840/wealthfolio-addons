@@ -10,7 +10,7 @@ Community addons are author-maintained. Unverified directory entries are for dis
 | Value Averaging Addon | wujoe | Runs a value averaging strategy with portfolio weights, top-up rules, growth schedules, and per-ticker investment amounts. | community | unverified | active |  | [Repo](https://github.com/WuJoe826/Value-Averaging-Addon) |
 | Wealthfolio Dividend Tracker | ragnarok896209 | Dividend tracking by year, month, and security with stacked bar charts and per-account tables. | community | unverified | active |  | [Repo](https://github.com/ragnarok-89/Wealthfolio-Dividend-Tracker) |
 | Wealthfolio Rebalancer | ibalboteo | Portfolio rebalancing addon for target allocations and long-term portfolio planning. | community | unverified | active |  | [Repo](https://github.com/ibalboteo/wealthfolio-rebalancer) |
-| SimpleFin Sync | Bubbles840 | Automatically import bank and credit-card transactions from SimpleFin, with correct balances, pending reconciliation, and internal-transfer linking. Optional Telegram reports and commands, and automatic categorization of Amazon charges from their order emails. | community | verified | active | 1.12.0 | [Repo](https://github.com/Bubbles840/wealthfolio-simplefin-addon) |
+| SimpleFin Sync | Bubbles840 | Automatically import bank and credit-card transactions from SimpleFin, with correct balances, pending reconciliation, and internal-transfer linking. Optional Telegram reports and commands, and automatic categorization of Amazon charges from their order emails. | community | verified | active | 1.13.0 | [Repo](https://github.com/Bubbles840/wealthfolio-simplefin-addon) |
 
 ## Pending
 

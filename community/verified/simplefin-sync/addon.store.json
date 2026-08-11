@@ -24,10 +24,10 @@
   "source": {
     "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
     "tag": "v1.12.0",
-    "commit": "94a38034dd2fdd522e35cbe6ea9bbf099508bbd6"
+    "commit": "458b8ef034f7804db02f38a6fa6fd557e4e1eaeb"
   },
   "release": {
-    "version": "1.12.0",
+    "version": "1.13.0",
     "minWealthfolioVersion": "3.6.2",
     "sdkVersion": "3.6.2",
     "critical": false,
@@ -36,7 +36,7 @@
     "changelogUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/releases/tag/v1.12.0"
   },
   "distribution": {
-    "r2Path": "simplefin-sync/1.12.0/simplefin-sync.zip"
+    "r2Path": "simplefin-sync/1.13.0/simplefin-sync.zip"
   },
   "media": {
     "coverLight": "assets/cover-light.webp",
