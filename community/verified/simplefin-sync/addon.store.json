@@ -2,7 +2,7 @@
   "$schema": "../../../schemas/addon-store.schema.json",
   "id": "simplefin-sync",
   "name": "SimpleFin Sync",
-  "description": "Automatically import bank and credit-card transactions from SimpleFin, with correct balances, pending reconciliation, and internal-transfer linking.",
+  "description": "Automatically import bank and credit-card transactions from SimpleFin, with correct balances, pending reconciliation, and internal-transfer linking. Optional Telegram reports and commands, and automatic categorization of Amazon charges from their order emails.",
   "author": {
     "name": "Bubbles840",
     "url": "https://github.com/Bubbles840"
@@ -15,26 +15,28 @@
     "import",
     "sync",
     "transactions",
-    "spending"
+    "spending",
+    "telegram",
+    "categorization"
   ],
   "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
   "supportUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/issues",
   "source": {
     "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
-    "tag": "v1.9.0",
-    "commit": "0945c37df77bf63c49ea8129c62faa14e6d79cdc"
+    "tag": "v1.12.0",
+    "commit": "94a38034dd2fdd522e35cbe6ea9bbf099508bbd6"
   },
   "release": {
-    "version": "1.9.0",
+    "version": "1.12.0",
     "minWealthfolioVersion": "3.6.2",
     "sdkVersion": "3.6.2",
     "critical": false,
     "breaking": false,
-    "notes": "Adds automatic categorization of Amazon charges from their order emails, read by the companion at sync time, with no extra container to run. Fixes a bug where a refused row could discard a whole account's import batch, and a phantom balance drift equal to a refused row's amount. Accounts that could not be checked now say so instead of showing as in sync.",
-    "changelogUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/releases/tag/v1.9.0"
+    "notes": "Reorganizes the addon into three tabs with a dashboard Overview, a self-completing setup checklist, and plainer wording. Adds a \"Needs a category\" tile that opens into the actual transactions, each dismissable with an undo window. The optional Telegram bot now answers seven commands \u2014 including /categorize, which files a transaction under a category from a tappable menu, and /newrule for plain-text categorization rules. Fixes Amazon's changed email format, which had silently stopped categorization, and surfaces unreadable mail as a visible warning instead of a server log line.",
+    "changelogUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/releases/tag/v1.12.0"
   },
   "distribution": {
-    "r2Path": "simplefin-sync/1.9.0/simplefin-sync.zip"
+    "r2Path": "simplefin-sync/1.12.0/simplefin-sync.zip"
   },
   "media": {
     "coverLight": "assets/cover-light.webp",
