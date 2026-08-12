@@ -23,20 +23,20 @@
   "supportUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/issues",
   "source": {
     "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
-    "tag": "v1.14.0",
-    "commit": "3c3362dfaa419280529116669e71a06f88c95432"
+    "tag": "v1.14.1",
+    "commit": "1c9733a68628efbacd3e9648cc2af3eb167e14ee"
   },
   "release": {
-    "version": "1.14.0",
+    "version": "1.14.1",
     "minWealthfolioVersion": "3.6.2",
     "sdkVersion": "3.6.2",
     "critical": false,
     "breaking": false,
-    "notes": "Transaction rules can now mark a payback as a reimbursement. A rule sets an activity's subtype as well as its type, so a Venmo or Zelle repayment imports as a credit marked REIMBURSEMENT and reduces whatever category you file it under instead of counting as income \u2014 and the next sync applies it to transactions already imported, so a recurring payback is fixed once rather than one at a time. The Telegram bot's /recategorize now refuses a move Wealthfolio would reject, and says what would make it work, instead of clearing the old category and failing afterwards.",
-    "changelogUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/releases/tag/v1.14.0"
+    "notes": "Transaction rules can now mark a payback as a reimbursement. A rule sets an activity's subtype as well as its type, so a Venmo or Zelle repayment imports as a credit marked REIMBURSEMENT and reduces whatever category you file it under instead of counting as income \u2014 and the next sync applies it to transactions already imported, so a recurring payback is fixed once rather than one at a time. The Telegram bot's /recategorize now refuses a move Wealthfolio would reject, and says what would make it work, instead of clearing the old category and failing afterwards. Also fixes a sync that could import transactions and fail to send the Telegram notice without recording why.",
+    "changelogUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/releases/tag/v1.14.1"
   },
   "distribution": {
-    "r2Path": "simplefin-sync/1.14.0/simplefin-sync.zip"
+    "r2Path": "simplefin-sync/1.14.1/simplefin-sync.zip"
   },
   "media": {
     "coverLight": "assets/cover-light.webp",
