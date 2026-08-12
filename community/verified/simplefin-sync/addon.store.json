@@ -23,20 +23,20 @@
   "supportUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/issues",
   "source": {
     "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
-    "tag": "v1.12.0",
-    "commit": "458b8ef034f7804db02f38a6fa6fd557e4e1eaeb"
+    "tag": "v1.14.0",
+    "commit": "3c3362dfaa419280529116669e71a06f88c95432"
   },
   "release": {
-    "version": "1.13.0",
+    "version": "1.14.0",
     "minWealthfolioVersion": "3.6.2",
     "sdkVersion": "3.6.2",
     "critical": false,
     "breaking": false,
-    "notes": "Reorganizes the addon into three tabs with a dashboard Overview, a self-completing setup checklist, and plainer wording. Adds a \"Needs a category\" tile that opens into the actual transactions, each dismissable with an undo window. The optional Telegram bot now answers seven commands \u2014 including /categorize, which files a transaction under a category from a tappable menu, and /newrule for plain-text categorization rules. Fixes Amazon's changed email format, which had silently stopped categorization, and surfaces unreadable mail as a visible warning instead of a server log line.",
-    "changelogUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/releases/tag/v1.12.0"
+    "notes": "Transaction rules can now mark a payback as a reimbursement. A rule sets an activity's subtype as well as its type, so a Venmo or Zelle repayment imports as a credit marked REIMBURSEMENT and reduces whatever category you file it under instead of counting as income \u2014 and the next sync applies it to transactions already imported, so a recurring payback is fixed once rather than one at a time. The Telegram bot's /recategorize now refuses a move Wealthfolio would reject, and says what would make it work, instead of clearing the old category and failing afterwards.",
+    "changelogUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/releases/tag/v1.14.0"
   },
   "distribution": {
-    "r2Path": "simplefin-sync/1.13.0/simplefin-sync.zip"
+    "r2Path": "simplefin-sync/1.14.0/simplefin-sync.zip"
   },
   "media": {
     "coverLight": "assets/cover-light.webp",
