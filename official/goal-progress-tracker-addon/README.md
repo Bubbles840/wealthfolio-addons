@@ -66,9 +66,6 @@ pnpm install
 # Rebuild continuously without connecting to Wealthfolio
 pnpm dev
 
-# Before live testing with Wealthfolio 3.7, upgrade the development server
-pnpm add -D @wealthfolio/addon-dev-tools@^3.7.0
-
 # Serve the complete runtime package to Wealthfolio with hot reload
 pnpm dev:server
 

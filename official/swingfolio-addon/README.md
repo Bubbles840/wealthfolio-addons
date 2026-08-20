@@ -124,11 +124,9 @@ UI permission entry for release compatibility.
 
 ### Development
 
-`pnpm dev` rebuilds the addon continuously. Before live testing with a
-Wealthfolio 3.7 host, run
-`pnpm add -D @wealthfolio/addon-dev-tools@^3.7.0`, then use `pnpm dev:server` to
-serve the complete runtime package with hot reload. The published 3.6.2 bundle
-itself remains runtime-compatible.
+`pnpm dev` rebuilds the addon continuously. `pnpm dev:server` serves the
+complete runtime package to a Wealthfolio 3.7 host with hot reload. The
+published 3.6.2 bundle itself remains runtime-compatible.
 
 ### Trade Matching Engine
 
