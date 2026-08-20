@@ -8,8 +8,7 @@
     "url": "https://github.com/elson"
   },
   "trust": "community",
-  "verification": "unverified",
-  "status": "active",
+  "status": "pending",
   "tags": ["import", "integration"],
   "repository": "https://github.com/elson/lunchmoney-addon"
 }

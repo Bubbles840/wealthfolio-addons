@@ -40,24 +40,23 @@ remain outside this repo. Do not add database rows or dynamic store metrics here
 
 ## Migrating A Community Addon PR
 
-For discovery-only listing, create:
+Community addons are directory listings. Create one file:
 
 ```text
 community/directory/<addon-id>/addon.store.json
 ```
 
-For a verified installable addon, create:
+Wealthfolio does not build or host community artifacts, so there is no pinned
+source, no `distribution` block, and no screenshots to submit. The listing needs
+a public repository, a support URL, an SPDX licence, the declared Wealthfolio
+version, a commercial model, the `dataHandling` disclosures, and the standard
+notices for its category. See [POLICIES.md](../POLICIES.md) and
+[CONTRIBUTING.md](../CONTRIBUTING.md).
 
-```text
-community/verified/<addon-id>/addon.store.json
-community/verified/<addon-id>/assets/cover-light.webp
-community/verified/<addon-id>/assets/cover-dark.webp
-```
-
-Verified community submissions must include a public repository, pinned release
-tag, pinned commit SHA, declared permissions, release notes, support URL, and
-screenshots. Wealthfolio should build the installable artifact from pinned
-source before publishing it through the catalog/store release pipeline.
+The earlier Verified Community tier has been removed. A PR that targeted
+`community/verified/` becomes a directory listing: drop `verification`,
+`distribution`, `media`, `source`, and `release`, and add the publisher
+disclosures.
 
 ## Command Mapping
 

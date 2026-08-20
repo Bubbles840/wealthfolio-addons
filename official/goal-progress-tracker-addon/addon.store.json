@@ -2,7 +2,6 @@
   "$schema": "../../schemas/addon-store.schema.json",
   "id": "goal-progress-tracker-addon",
   "trust": "official",
-  "verification": "verified",
   "status": "active",
   "featured": true,
   "tags": [
@@ -19,7 +18,7 @@
     "changelogUrl": "https://github.com/wealthfolio/wealthfolio-addons/tree/main/official/goal-progress-tracker-addon/CHANGELOG.md"
   },
   "distribution": {
-    "r2Path": "goal-progress-tracker-addon/3.6.2/goal-progress-tracker-addon.zip"
+    "r2Path": "goal-progress-tracker-addon/goal-progress-tracker-addon-3.6.2.zip"
   },
   "media": {
     "coverLight": "assets/cover-light.webp",

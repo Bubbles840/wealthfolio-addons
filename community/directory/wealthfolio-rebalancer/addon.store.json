@@ -8,8 +8,7 @@
     "url": "https://github.com/ibalboteo"
   },
   "trust": "community",
-  "verification": "unverified",
-  "status": "active",
+  "status": "pending",
   "tags": ["portfolio", "rebalancing"],
   "repository": "https://github.com/ibalboteo/wealthfolio-rebalancer"
 }

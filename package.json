@@ -12,8 +12,14 @@
     "bundle:official": "pnpm -r --filter './official/*' bundle",
     "type-check:official": "pnpm -r --filter './official/*' type-check",
     "validate:addons": "node scripts/validate-addons.mjs",
+    "test:schema": "node scripts/test-schema.mjs",
+    "release:official": "node scripts/release-official.mjs",
     "generate:readme": "node scripts/generate-readme.mjs",
     "generate": "pnpm generate:readme",
-    "check": "pnpm validate:addons && pnpm type-check:official"
+    "check": "pnpm test:schema && pnpm validate:addons && pnpm type-check:official"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1"
   }
 }

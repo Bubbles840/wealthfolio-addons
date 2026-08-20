@@ -2,14 +2,19 @@
 
 Thanks for contributing to the Wealthfolio addon ecosystem.
 
-## Contribution Types
+There are two kinds of contribution to this repository, and only two.
 
-### Community Directory Addon
+## 1. Community directory listing
 
-Use this when you want your addon discoverable from Wealthfolio but do not need
-in-app install support yet.
+A directory listing makes your addon discoverable from
+[wealthfolio.app/addons/community](https://wealthfolio.app/addons/community).
+It is a link to your repository — Wealthfolio does not build, host, audit,
+endorse, or support your addon, and users install it with **Install from File**.
 
-Required PR content:
+Read [POLICIES.md](POLICIES.md) first: it defines what you confirm when you
+submit, and what Wealthfolio does and does not do with your listing.
+
+Required PR content — one file:
 
 ```text
 community/directory/<addon-id>/addon.store.json
@@ -21,109 +26,115 @@ Start from:
 templates/community-directory-addon/addon.store.json
 ```
 
-Directory addons are author-maintained and unverified. Wealthfolio checks that
-metadata is valid and the repository is appropriate, but does not build, review,
-or host the package.
+Your listing needs all of this before it can be published:
 
-### Verified Community Addon
+- `name`, `description` (plain text), `author` naming the **publisher**
+- `repository` — public, HTTPS
+- `supportUrl` — where users report problems to you
+- `license` — SPDX identifier matching the licence in your repository
+- `minWealthfolioVersion` — the lowest version you declare support for
+- `commercialModel` — `free`, `paid`, `subscription`, or
+  `external-service-required`
+- `dataHandling` — see below
+- `notices` — the standard notices your category requires
 
-Use this when the addon should be installable from Wealthfolio.
+The pull request template contains the publisher attestation. Fill it in;
+listings are not merged without it.
 
-Required PR content:
+### Declaring data handling
 
-```text
-community/verified/<addon-id>/addon.store.json
-community/verified/<addon-id>/assets/cover-light.webp
-community/verified/<addon-id>/assets/cover-dark.webp
+```json
+{
+  "dataHandling": {
+    "leavesDevice": false,
+    "dataTypes": ["holdings", "transactions"],
+    "externalServices": []
+  }
+}
 ```
 
-Start from:
+If **anything** leaves the user's device — an API call, a webhook, telemetry,
+an import from a third-party service — then `leavesDevice` is `true`, every
+recipient goes in `externalServices`, and you must provide a `privacyUrl`:
 
-```text
-templates/verified-community-addon/addon.store.json
+```json
+{
+  "privacyUrl": "https://example.com/privacy",
+  "dataHandling": {
+    "leavesDevice": true,
+    "dataTypes": ["accounts", "account-balances", "transactions"],
+    "externalServices": [{ "name": "Example Sync", "url": "https://example.com" }]
+  }
+}
 ```
 
-Verified community addons require:
+These declarations are informational. The permission dialog Wealthfolio shows
+at install time is the authoritative permission surface.
 
-- public source repository
-- pinned release tag and commit SHA
-- valid Wealthfolio `manifest.json`
-- declared permissions with clear purposes
-- release notes and support URL
-- 16:9 light and dark screenshots referenced by `addon.store.json`
-- Wealthfolio-built artifact prepared for the catalog/store release pipeline
+### Standard notices
 
-Do not attach arbitrary release zips directly to the PR. Wealthfolio CI should
-build the zip from the pinned source; the catalog/store release pipeline handles
-publishing after review.
+Pick from the fixed list; the website renders the wording.
 
-### Official Addon
+| Notice | Required for tags such as |
+| --- | --- |
+| `not-tax-advice` | `tax`, `taxes`, `cgt`, `capital-gains`, `wealth-tax` |
+| `not-investment-advice` | `rebalancing`, `strategy`, `allocation`, `trading`, `screener` |
+| `not-financial-advice` | `planning`, `projections`, `retirement`, `forecast` |
 
-Official addons are owned and supported by Wealthfolio. Full source lives under:
+The full mapping lives in [`scripts/lib/notices.mjs`](scripts/lib/notices.mjs)
+and is enforced in CI.
 
-```text
-official/<addon-id>/
-```
+## 2. Official addon source
+
+Official addons are owned, built, distributed, and supported by Wealthfolio.
+Their full source lives under `official/<addon-id>/`. Community submissions are
+not accepted into this directory; publish your addon yourself and submit a
+directory listing instead.
 
 Official addon changes must update:
 
 - `manifest.json`
 - `addon.store.json`
 - `CHANGELOG.md`
-- tests or validation coverage when behavior changes
+- tests or validation coverage when behaviour changes
 
-## Metadata Rules
+## Metadata contracts
 
-`manifest.json` is the runtime contract:
+`manifest.json` is the runtime contract consumed by the app: addon id, display
+name, version, SDK version, entrypoint, declared permissions, allowed network
+hosts.
 
-- addon id
-- display name
-- runtime version
-- SDK version
-- entrypoint
-- declared permissions
-
-`addon.store.json` is the store contract:
-
-- trust and verification state
-- lifecycle status
-- category tags
-- release notes
-- distribution path for the external catalog/store pipeline
-- screenshot paths
-- source and support links
+`addon.store.json` is the catalog contract: trust tier, lifecycle status,
+category tags, publisher disclosures, release metadata, and — for official
+addons only — the distribution key.
 
 Do not put dynamic metrics such as downloads, rating, or review count in
 `addon.store.json`. Those belong to the store service.
 
-## Status Values
+## Status values
 
-| Status        | Meaning                                        |
-| ------------- | ---------------------------------------------- |
-| `active`      | Visible and usable for its verification level  |
-| `coming-soon` | Visible but not installable yet                |
-| `deprecated`  | Visible with warning; new installs discouraged |
-| `inactive`    | Hidden from normal browsing                    |
+| Status        | Meaning                                                        |
+| ------------- | -------------------------------------------------------------- |
+| `active`      | Published on the website                                        |
+| `pending`     | Submitted, waiting on publisher confirmation; not published yet |
+| `coming-soon` | Announced, not usable yet                                       |
+| `deprecated`  | Still listed, with a warning; new installs discouraged          |
+| `inactive`    | Hidden                                                          |
 
-## Verification Values
+A `pending` listing may carry minimal metadata. An `active` listing must carry
+the full disclosure set above.
 
-| Verification | Meaning                           |
-| ------------ | --------------------------------- |
-| `unverified` | Discovery listing only            |
-| `verified`   | Reviewed and built by Wealthfolio |
-
-## Local Checks
-
-Run these before opening a PR:
+## Local checks
 
 ```bash
 pnpm install
+pnpm test:schema
 pnpm validate:addons
 pnpm generate
 ```
 
-If you are moving an addon from the old app repository layout, read
-[docs/repository-migration.md](docs/repository-migration.md) first.
+`pnpm generate` rewrites `community/README.md` and `official/README.md`; commit
+the result, because CI fails on a diff.
 
 For official addon source changes, also run:
 
@@ -132,31 +143,27 @@ pnpm type-check:official
 pnpm bundle:official
 ```
 
-## Security Expectations
+If you are moving an addon from the old app repository layout, read
+[docs/repository-migration.md](docs/repository-migration.md) first.
+
+## Security expectations
 
 - Do not include secrets in source, docs, manifests, or screenshots.
-- Do not request permissions that are not used.
+- Do not request permissions the addon does not use.
 - Explain every permission in plain language.
 - Avoid remote script loading and dynamic code execution.
-- Use lockfiles for external community source builds.
-- Verified community submissions must pin both tag and commit SHA.
+- Declare `network.allowedHosts` for every host the addon reaches.
+- Report vulnerabilities and malicious addons privately — see
+  [SECURITY.md](SECURITY.md). Never in a public issue.
 
 ## Screenshots
 
-Use 16:9 WebP screenshots by default:
+Community listings do not need screenshots. Official addons use 16:9 WebP:
 
 ```text
 assets/cover-light.webp
 assets/cover-dark.webp
 ```
 
-If you use png instead, update `addon.store.json` to match the actual file
-names.
-
-The catalog/store release pipeline maps these repo-local files to the current
-catalog CDN convention:
-
-```text
-https://assets.wealthfolio.app/images/addons/<addon-id>-<version>.webp
-https://assets.wealthfolio.app/images/addons/<addon-id>-<version>-dark.webp
-```
+PNG is accepted; update `addon.store.json` to match the actual file names. Files
+are limited to 2 MiB each. SVG is not accepted.
