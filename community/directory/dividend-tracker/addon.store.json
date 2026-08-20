@@ -10,5 +10,6 @@
   "trust": "community",
   "status": "pending",
   "tags": ["dividends", "analytics"],
+  "commercialModel": "free",
   "repository": "https://github.com/ragnarok-89/Wealthfolio-Dividend-Tracker"
 }

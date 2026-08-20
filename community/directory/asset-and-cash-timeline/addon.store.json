@@ -10,5 +10,6 @@
   "trust": "community",
   "status": "pending",
   "tags": ["cash", "analytics", "timeline"],
+  "commercialModel": "free",
   "repository": "https://github.com/bryanrvo/Asset-amount-Cash-Timeline-add-on"
 }

@@ -10,5 +10,6 @@
   "trust": "community",
   "status": "pending",
   "tags": ["portfolio", "rebalancing"],
+  "commercialModel": "free",
   "repository": "https://github.com/ibalboteo/wealthfolio-rebalancer"
 }

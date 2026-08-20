@@ -10,5 +10,6 @@
   "trust": "community",
   "status": "pending",
   "tags": ["planning", "strategy"],
+  "commercialModel": "free",
   "repository": "https://github.com/WuJoe826/Value-Averaging-Addon"
 }

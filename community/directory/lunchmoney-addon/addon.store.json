@@ -10,6 +10,6 @@
   "trust": "community",
   "status": "active",
   "tags": ["import", "integration"],
-  "commercialModel": "free",
+  "commercialModel": "external-service-required",
   "repository": "https://github.com/elson/lunchmoney-addon"
 }
