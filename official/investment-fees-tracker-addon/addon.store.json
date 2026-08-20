@@ -2,7 +2,6 @@
   "$schema": "../../schemas/addon-store.schema.json",
   "id": "investment-fees-tracker-addon",
   "trust": "official",
-  "verification": "verified",
   "status": "active",
   "featured": true,
   "tags": [
@@ -20,11 +19,11 @@
     "changelogUrl": "https://github.com/wealthfolio/wealthfolio-addons/tree/main/official/investment-fees-tracker-addon/CHANGELOG.md"
   },
   "distribution": {
-    "r2Path": "investment-fees-tracker-addon/3.6.2/investment-fees-tracker-addon.zip"
+    "r2Path": "investment-fees-tracker-addon/investment-fees-tracker-addon-3.6.2.zip"
   },
   "media": {
-    "coverLight": "assets/cover-light.webp",
-    "coverDark": "assets/cover-dark.webp"
+    "coverLight": "media/cover-light.webp",
+    "coverDark": "media/cover-dark.webp"
   },
   "supportUrl": "https://github.com/wealthfolio/wealthfolio-addons/issues"
 }
