@@ -3,7 +3,6 @@ import { existsSync, statSync } from "node:fs";
 import { getAddonRecords, readJson, repoRoot } from "./lib/addon-records.mjs";
 import { createStoreValidator, formatSchemaErrors } from "./lib/schema.mjs";
 import { inspectImage } from "./lib/images.mjs";
-import { requiredNotices } from "./lib/notices.mjs";
 import { downloadUrl, r2Key } from "./lib/distribution.mjs";
 import { blockingProblems } from "./lib/derive.mjs";
 

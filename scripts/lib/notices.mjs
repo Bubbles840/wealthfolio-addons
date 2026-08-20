@@ -1,15 +1,8 @@
 /**
- * Standard notices rendered by the website.
- *
- * Publishers pick from this list; they never write custom disclaimer copy, and
- * the copy itself lives on the website so it can be corrected in one place.
- */
-export const NOTICES = ["not-tax-advice", "not-investment-advice", "not-financial-advice"];
-
-/**
- * Tags that make a notice mandatory. Applied to community directory entries so
- * that a tax or strategy addon always carries the matching notice, regardless
- * of when it was submitted.
+ * Tags that imply a standard notice. The permitted notice values live in
+ * schemas/addon-store.schema.json; this file maps tags onto them, so a tax or
+ * strategy addon always carries the matching notice regardless of when it was
+ * submitted. The website renders the wording.
  */
 export const NOTICE_BY_TAG = {
   tax: "not-tax-advice",

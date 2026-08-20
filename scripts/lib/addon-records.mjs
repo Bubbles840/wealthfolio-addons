@@ -76,8 +76,3 @@ export function description(record) {
 export function isInstallable(record) {
   return record.metadata.trust === "official" && record.metadata.status === "active";
 }
-
-/** Community entries are published on the website only once the publisher confirms them. */
-export function isPubliclyListed(record) {
-  return record.metadata.status === "active";
-}
