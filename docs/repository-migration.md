@@ -33,7 +33,8 @@ remain outside this repo. Do not add database rows or dynamic store metrics here
    `@wealthfolio/addon-sdk`, `@wealthfolio/addon-dev-tools`, and
    `@wealthfolio/ui`.
 4. Keep `manifest.json`, `package.json`, and `CHANGELOG.md` versions aligned.
-5. Add wide landscape light and dark screenshots under `assets/` and reference them from
+5. Add wide landscape light and dark screenshots under `media/` — not
+   `assets/`, which is bundled into the shipped addon — and reference them from
    `addon.store.json`.
 6. Run `pnpm validate:addons`, `pnpm type-check:official`, and
    `pnpm bundle:official`.

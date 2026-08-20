@@ -24,6 +24,6 @@ declared here — see [community/derived.json](derived.json), refreshed with
 Only `active` entries appear on
 [wealthfolio.app/addons/community](https://wealthfolio.app/addons/community). A
 listing cannot become active while its repository has no detectable licence, or
-while its manifest declares an `sdkVersion` below 3.6 — before that release an
-addon could reach the network without declaring it, so its manifest cannot show
-where data goes.
+while its manifest does not declare a readable `sdkVersion` of 3.6 or newer —
+before that release an addon could reach the network without declaring it, so
+its manifest cannot show where data goes.
