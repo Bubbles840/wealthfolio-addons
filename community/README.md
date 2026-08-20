@@ -10,16 +10,20 @@ Listing requirements and the publisher attestation are in
 
 | Addon | Publisher | Status | Licence | Runtime | Repo |
 | --- | --- | --- | --- | --- | --- |
-| Asset Amount & Cash Timeline | bryanrvo1511 | pending | MIT | pre-3.6 SDK | [Repo](https://github.com/bryanrvo/Asset-amount-Cash-Timeline-add-on) |
-| Dividends Importer | kwaich | pending | none | current SDK | [Repo](https://github.com/kwaich/dividend-tracker) |
-| Wealthfolio Dividend Tracker | ragnarok896209 | pending | none | pre-3.6 SDK | [Repo](https://github.com/ragnarok-89/Wealthfolio-Dividend-Tracker) |
-| Lunch Money Addon | elson8012 | pending | MIT | pre-3.6 SDK | [Repo](https://github.com/elson/lunchmoney-addon) |
-| Wealthfolio Rebalancer | ibalboteo | pending | none | current SDK | [Repo](https://github.com/ibalboteo/wealthfolio-rebalancer) |
-| Value Averaging Addon | wujoe | pending | MIT | pre-3.6 SDK | [Repo](https://github.com/WuJoe826/Value-Averaging-Addon) |
+| Asset Amount & Cash Timeline | bryanrvo1511 | pending | MIT | pre-3.6 — rebuild needed | [Repo](https://github.com/bryanrvo/Asset-amount-Cash-Timeline-add-on) |
+| Dividends Importer | kwaich | pending | none | SDK 3.6+ | [Repo](https://github.com/kwaich/dividend-tracker) |
+| Wealthfolio Dividend Tracker | ragnarok896209 | pending | none | pre-3.6 — rebuild needed | [Repo](https://github.com/ragnarok-89/Wealthfolio-Dividend-Tracker) |
+| Lunch Money Addon | elson8012 | pending | MIT | pre-3.6 — rebuild needed | [Repo](https://github.com/elson/lunchmoney-addon) |
+| Wealthfolio Rebalancer | ibalboteo | pending | none | SDK 3.6+ | [Repo](https://github.com/ibalboteo/wealthfolio-rebalancer) |
+| Value Averaging Addon | wujoe | pending | MIT | pre-3.6 — rebuild needed | [Repo](https://github.com/WuJoe826/Value-Averaging-Addon) |
 
 Licence and runtime are **derived** from each publisher's repository, not
 declared here — see [community/derived.json](derived.json), refreshed with
-`pnpm derive:community`. Only `active` entries appear on
-[wealthfolio.app/addons/community](https://wealthfolio.app/addons/community); a
-listing cannot become active while its repository has no licence or its addon
-cannot load on the current runtime.
+`pnpm derive:community`.
+
+Only `active` entries appear on
+[wealthfolio.app/addons/community](https://wealthfolio.app/addons/community). A
+listing cannot become active while its repository has no detectable licence, or
+while its manifest declares an `sdkVersion` below 3.6 — before that release an
+addon could reach the network without declaring it, so its manifest cannot show
+where data goes.

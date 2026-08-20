@@ -47,11 +47,11 @@ I have read [POLICIES.md](https://github.com/wealthfolio/wealthfolio-addons/blob
 - [ ] `commercialModel` is set. Licence, compatibility, and standard notices are
       derived from your repository — do not fill those in.
 - [ ] The repository has a licence file and a `manifest.json` at its root.
-- [ ] **If your manifest targets an SDK below 3.6**, add `dataHandling`
-      yourself (and a `privacyUrl` if anything leaves the device). Before 3.6 an
-      addon could reach the network without declaring it, so the manifest cannot
-      show where data goes and Wealthfolio will not guess. Rebuilding against
-      the current SDK removes the need.
+- [ ] **The manifest declares `sdkVersion` 3.6 or newer.** Before 3.6 an addon
+      could reach the network without declaring it, so its manifest cannot show
+      where data goes — and a listing cannot be published on that basis.
+      Rebuild against the current SDK; declaring `dataHandling` is not an
+      alternative.
 - [ ] All URLs are HTTPS and resolve.
 - [ ] `pnpm validate:addons` and `pnpm generate` pass locally with no diff.
 

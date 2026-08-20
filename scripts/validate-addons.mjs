@@ -4,6 +4,7 @@ import { getAddonRecords, readJson, repoRoot } from "./lib/addon-records.mjs";
 import { createStoreValidator, formatSchemaErrors } from "./lib/schema.mjs";
 import { inspectImage } from "./lib/images.mjs";
 import { downloadUrl, r2Key } from "./lib/distribution.mjs";
+import { requiredNotices } from "./lib/notices.mjs";
 import { blockingProblems } from "./lib/derive.mjs";
 
 const MAX_MEDIA_BYTES = 2 * 1024 * 1024;
@@ -123,7 +124,19 @@ function validateDerived(record) {
     return;
   }
 
-  const blocking = blockingProblems(entry, metadata);
+  // Notices come from tags, which live in this repository — so unlike the rest
+  // of the derived record they can go stale without anything remote changing.
+  // Recomputing them offline keeps a retagged listing from publishing without
+  // the notice its category requires.
+  const expectedNotices = requiredNotices(metadata.tags).join(",");
+  if ((entry.notices ?? []).join(",") !== expectedNotices) {
+    errors.push(
+      `${prefix}: derived notices are stale for the current tags; run pnpm derive:community`,
+    );
+    return;
+  }
+
+  const blocking = blockingProblems(entry);
   if (metadata.status === "active" && blocking.length) {
     for (const problem of blocking) {
       errors.push(`${prefix}: cannot publish — ${problem}`);

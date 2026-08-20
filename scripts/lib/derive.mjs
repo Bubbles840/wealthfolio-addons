@@ -34,7 +34,11 @@ const SANDBOX_SDK = [3, 6];
 const VERSION_PATTERN = /^(\d+)\.(\d+)(?:\.(\d+))?(?:[-+][0-9A-Za-z.-]+)?$/;
 
 function versionParts(version) {
-  const match = VERSION_PATTERN.exec(String(version ?? "").trim());
+  // The host reads sdkVersion only when it is a string, so a JSON number is
+  // absent as far as the runtime is concerned. String(3.6) would otherwise
+  // become "3.6" and earn the sandbox guarantee.
+  if (typeof version !== "string") return null;
+  const match = VERSION_PATTERN.exec(version.trim());
   if (!match) return null;
   return [Number(match[1]), Number(match[2]), match[3] ? Number(match[3]) : 0];
 }
@@ -267,24 +271,23 @@ export async function deriveListing(metadata) {
 
 /**
  * Problems that prevent a listing from being published publicly: no licence to
- * use it under, or nothing readable to describe.
+ * use it under, nothing readable to describe, or a build predating the sandbox.
  *
- * Age alone is not one of them — but an unknown data story is, unless the
- * publisher fills the gap themselves. Publishing a page that cannot say where
- * a user's data goes is worse than publishing nothing.
+ * The SDK requirement is not about age for its own sake. Before 3.6 an addon
+ * could reach the network without declaring it, so nothing about where a user's
+ * data goes can be established from the manifest — and a publisher's promise is
+ * not a substitute for a runtime that enforces it. A `dataHandling` block
+ * remains useful disclosure for what a manifest cannot express, but it is not
+ * an alternative route to publication: the fix is to rebuild.
  */
-export function blockingProblems(derived, metadata = {}) {
+export function blockingProblems(derived) {
   const problems = [...(derived.problems ?? [])];
 
-  if (derived.dataHandling && derived.dataHandling.userDataLeavesDevice === null) {
-    const declared = metadata.dataHandling;
-    const declaredCompletely =
-      declared && (declared.leavesDevice === false || Boolean(metadata.privacyUrl));
-    if (!declaredCompletely) {
-      problems.push(
-        "data handling cannot be derived from a pre-3.6 manifest; the publisher must declare dataHandling (and a privacyUrl if anything leaves the device)",
-      );
-    }
+  const state = derived.compatibility?.state;
+  if (state === "predates-sandbox" || state === "unknown") {
+    problems.push(
+      `${derived.compatibility.detail} Rebuild the addon against SDK 3.6 or newer to publish it.`,
+    );
   }
 
   return problems.filter(
@@ -294,6 +297,6 @@ export function blockingProblems(derived, metadata = {}) {
       problem.includes("not a public github.com URL") ||
       problem.includes("manifest.json") ||
       problem.includes("not an object") ||
-      problem.includes("data handling cannot be derived"),
+      problem.includes("Rebuild the addon against SDK"),
   );
 }

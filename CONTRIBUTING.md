@@ -64,23 +64,24 @@ requests, and with it the broker allows only the declared hosts. That is a
 stronger statement than any promise in a JSON file.
 
 The guarantee does not reach backwards. An addon built before 3.6 ran on a host
-where `fetch` worked, so a missing permission proves nothing — and Wealthfolio
-will not claim your addon keeps data local when it cannot tell.
+where `fetch` worked, so nothing about where its data goes can be established
+from its manifest.
 
 A listing **cannot become `active`** while:
 
 - the repository has no detectable licence — without one, users have no legal
   right to use your addon;
 - there is no readable `manifest.json` at the repository root;
-- the manifest predates SDK 3.6 **and** you have not declared `dataHandling`
-  yourself.
+- the manifest's `sdkVersion` is missing, unreadable, or below **3.6**.
 
-SDK age alone never blocks a listing; it shows as a caution. What blocks is a
-page that cannot say where a user's data goes.
+**The SDK requirement cannot be waived by declaring data handling.** The point
+of it is that the runtime enforces where data goes, rather than the listing
+describing it. Rebuild against the current SDK and the requirement is met — for
+most addons that is a dependency bump, a rebuild, and a new release.
 
-If your manifest predates 3.6, or cannot express something users should know —
-a companion service, a feature reading data from somewhere unusual — add the
-`dataHandling` block. Anything leaving the device also needs a `privacyUrl`.
+`dataHandling` remains useful for anything a manifest cannot express — a
+companion service, a feature reading data from somewhere unusual. Declare it
+alongside a rebuilt manifest, with a `privacyUrl` if anything leaves the device.
 
 These declarations are informational. The permission dialog Wealthfolio shows
 at install time is the authoritative permission surface.

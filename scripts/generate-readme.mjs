@@ -15,9 +15,9 @@ const derivedPath = path.join(repoRoot, "community/derived.json");
 const derived = existsSync(derivedPath) ? (await readJson(derivedPath)).addons ?? {} : {};
 
 const COMPATIBILITY_LABEL = {
-  current: "current SDK",
-  "predates-sandbox": "pre-3.6 SDK",
-  unknown: "unknown",
+  current: "SDK 3.6+",
+  "predates-sandbox": "pre-3.6 — rebuild needed",
+  unknown: "no usable SDK version",
 };
 
 /**
@@ -85,10 +85,14 @@ ${community.map(communityRow).join("\n")}
 
 Licence and runtime are **derived** from each publisher's repository, not
 declared here — see [community/derived.json](derived.json), refreshed with
-\`pnpm derive:community\`. Only \`active\` entries appear on
-[wealthfolio.app/addons/community](https://wealthfolio.app/addons/community); a
-listing cannot become active while its repository has no licence or its addon
-cannot load on the current runtime.
+\`pnpm derive:community\`.
+
+Only \`active\` entries appear on
+[wealthfolio.app/addons/community](https://wealthfolio.app/addons/community). A
+listing cannot become active while its repository has no detectable licence, or
+while its manifest declares an \`sdkVersion\` below 3.6 — before that release an
+addon could reach the network without declaring it, so its manifest cannot show
+where data goes.
 `,
 );
 

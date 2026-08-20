@@ -115,27 +115,46 @@ for (const [label, manifest, expectedFragment] of structureCases) {
 expect("a sound manifest passes through", checkManifestStructure({ id: "x" }).manifest !== null);
 expect("a missing manifest is not an error here", checkManifestStructure(null).problems.length === 0);
 
-// --- publisher declarations satisfy the pre-sandbox gate --------------------
+// --- publication requires a sandbox-era build -------------------------------
+// A publisher declaration is disclosure, never a route around the rebuild: the
+// point of the SDK requirement is a runtime that enforces the data story rather
+// than a promise that describes it.
 {
-  const derived = { problems: [], dataHandling: { userDataLeavesDevice: null } };
+  const preSandbox = {
+    problems: [],
+    compatibility: { state: "predates-sandbox", detail: "Built against SDK 3.1.1." },
+    dataHandling: { userDataLeavesDevice: null },
+  };
+
+  expect("pre-sandbox listing is blocked", blockingProblems(preSandbox).length === 1);
   expect(
-    "undeclared pre-sandbox listing is blocked",
-    blockingProblems(derived, {}).length === 1,
+    "the block names the remedy",
+    /Rebuild the addon against SDK 3\.6 or newer/.test(blockingProblems(preSandbox)[0]),
+    blockingProblems(preSandbox)[0],
   );
+
+  const unknown = {
+    problems: [],
+    compatibility: { state: "unknown", detail: "No usable SDK version." },
+    dataHandling: { userDataLeavesDevice: null },
+  };
+  expect("unknown SDK is blocked", blockingProblems(unknown).length === 1);
+
+  const current = {
+    problems: [],
+    compatibility: { state: "current", detail: "Built against SDK 3.7.0." },
+    dataHandling: { userDataLeavesDevice: false },
+  };
+  expect("a sandbox-era listing publishes", blockingProblems(current).length === 0);
+}
+
+// --- a non-string SDK version is absent, not current ------------------------
+for (const sdkVersion of [3.6, 36, true, null, {}, ["3.6.0"]]) {
+  const state = deriveCompatibility({ sdkVersion }).state;
   expect(
-    "local-only declaration unblocks it",
-    blockingProblems(derived, { dataHandling: { leavesDevice: false } }).length === 0,
-  );
-  expect(
-    "egress declaration needs a privacy policy",
-    blockingProblems(derived, { dataHandling: { leavesDevice: true } }).length === 1,
-  );
-  expect(
-    "egress declaration with a privacy policy is enough",
-    blockingProblems(derived, {
-      dataHandling: { leavesDevice: true },
-      privacyUrl: "https://example.com/privacy",
-    }).length === 0,
+    `non-string sdkVersion ${JSON.stringify(sdkVersion)} is unknown`,
+    state === "unknown",
+    `got ${state}`,
   );
 }
 

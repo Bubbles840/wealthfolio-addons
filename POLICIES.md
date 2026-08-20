@@ -90,16 +90,21 @@ reaches only the hosts it declared and the user approved. That is stronger than
 any promise in a metadata file.
 
 It does not reach backwards. An addon built before 3.6 ran on a host where
-direct requests worked, so a missing permission proves nothing — and Wealthfolio
-will not tell users an addon keeps data local when it cannot tell. Such a
-listing needs the publisher's own `dataHandling` declaration before it can be
-published.
+direct requests worked, so its manifest cannot show where data goes.
 
 A listing cannot be published while its repository has no detectable licence
 (without one, users have no legal right to use the addon), while it has no
-readable manifest, or while its data story is neither derivable nor declared.
-SDK age alone never blocks a listing — it shows as a caution. These are the
-publisher's to fix, and Wealthfolio will say exactly which applies.
+readable manifest, or while that manifest does not declare an SDK version of
+**3.6 or newer**.
+
+The SDK requirement is not about age for its own sake, and it cannot be waived
+by declaring data handling instead. Wealthfolio publishes what the runtime
+enforces, not what a listing promises. Rebuilding against the current SDK is the
+route to publication.
+
+`dataHandling` remains available for anything a manifest cannot express — a
+companion service, an unusual data source — declared alongside a rebuilt
+manifest with a `privacyUrl` if anything leaves the device.
 
 ## Standard notices
 

@@ -23,11 +23,24 @@ import { getAddonRecords, readJson, repoRoot } from "./lib/addon-records.mjs";
 import { blockingProblems, deriveListing } from "./lib/derive.mjs";
 
 const args = process.argv.slice(2);
+
+function fail(message) {
+  console.error(`error: ${message}`);
+  process.exit(1);
+}
+
+const KNOWN_FLAGS = new Set(["--check", "--only"]);
+for (let index = 0; index < args.length; index += 1) {
+  const arg = args[index];
+  if (!arg.startsWith("--")) continue;
+  if (!KNOWN_FLAGS.has(arg)) fail(`unknown flag ${arg}`);
+  if (arg === "--only") index += 1;
+}
+
 const checkOnly = args.includes("--check");
 const onlyIndex = args.indexOf("--only");
 if (onlyIndex !== -1 && (!args[onlyIndex + 1] || args[onlyIndex + 1].startsWith("--"))) {
-  console.error("error: --only requires a value");
-  process.exit(1);
+  fail("--only requires a value");
 }
 const only = onlyIndex === -1 ? null : args[onlyIndex + 1];
 
@@ -37,6 +50,10 @@ const records = (await getAddonRecords())
   .filter((record) => record.metadata.trust === "community")
   .filter((record) => (only ? record.metadata.id === only : true));
 
+if (only && !records.length) {
+  fail(`no community listing with id "${only}"`);
+}
+
 const previous = existsSync(derivedPath) ? await readJson(derivedPath) : { addons: {} };
 const addons = only ? { ...previous.addons } : {};
 
@@ -45,7 +62,7 @@ for (const record of records) {
   try {
     const derived = await deriveListing(record.metadata);
     addons[record.metadata.id] = derived;
-    const blocking = blockingProblems(derived, record.metadata);
+    const blocking = blockingProblems(derived);
     process.stderr.write(
       blocking.length ? `blocked: ${blocking.join("; ")}\n` : `ok (${derived.license})\n`,
     );
