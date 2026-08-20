@@ -15,9 +15,8 @@ const derivedPath = path.join(repoRoot, "community/derived.json");
 const derived = existsSync(derivedPath) ? (await readJson(derivedPath)).addons ?? {} : {};
 
 const COMPATIBILITY_LABEL = {
-  ok: "current",
-  legacy: "older SDK",
-  outdated: "will not load",
+  current: "current SDK",
+  "predates-sandbox": "pre-3.6 SDK",
   unknown: "unknown",
 };
 

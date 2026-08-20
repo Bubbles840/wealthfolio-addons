@@ -16,9 +16,13 @@ import { requiredNotices } from "./notices.mjs";
 
 /**
  * The sandbox landed in SDK 3.6 and was a breaking change: direct network
- * access was removed in favour of the permission broker. Anything older than
- * that is at best untested on the current runtime, and anything older than 3.0
- * will not load at all.
+ * access was removed in favour of the permission broker.
+ *
+ * This is a caution, never a block. The host records `sdkVersion` but does not
+ * enforce it (only `minWealthfolioVersion` is enforced), so an older addon
+ * installs normally and may well work — a local-only addon touches nothing the
+ * sandbox changed. Saying "this cannot load" would be a claim about someone
+ * else's software that Wealthfolio has not tested.
  */
 const SANDBOX_SDK = [3, 6];
 
@@ -62,22 +66,17 @@ function deriveCompatibility(manifest) {
   }
 
   const [major, minor] = parts;
+  const predatesSandbox =
+    major < SANDBOX_SDK[0] || (major === SANDBOX_SDK[0] && minor < SANDBOX_SDK[1]);
 
-  if (major < 3) {
+  if (predatesSandbox) {
     return {
-      state: "outdated",
-      detail: `Built against SDK ${manifest.sdkVersion}, which the current addon runtime cannot load.`,
-    };
-  }
-
-  if (major === SANDBOX_SDK[0] && minor < SANDBOX_SDK[1]) {
-    return {
-      state: "legacy",
+      state: "predates-sandbox",
       detail: `Built against SDK ${manifest.sdkVersion}, before the ${SANDBOX_SDK.join(".")} sandbox change. It may not work on current Wealthfolio.`,
     };
   }
 
-  return { state: "ok", detail: `Built against SDK ${manifest.sdkVersion}.` };
+  return { state: "current", detail: `Built against SDK ${manifest.sdkVersion}.` };
 }
 
 /**
@@ -181,22 +180,15 @@ export async function deriveListing(metadata) {
 }
 
 /**
- * Problems that prevent a listing from being published publicly.
- *
- * An addon that cannot load is not a listing worth having: the user downloads
- * it, the install fails, and Wealthfolio gets the blame.
+ * Problems that prevent a listing from being published publicly: no licence to
+ * use it under, or nothing readable to describe. Age is not one of them.
  */
 export function blockingProblems(derived) {
-  const problems = [...(derived.problems ?? [])];
-  if (derived.compatibility?.state === "outdated") {
-    problems.push(derived.compatibility.detail);
-  }
-  return problems.filter(
+  return (derived.problems ?? []).filter(
     (problem) =>
       problem.includes("licence") ||
       problem.includes("could not be read") ||
       problem.includes("not a public github.com URL") ||
-      problem.includes("manifest.json") ||
-      problem.includes("cannot load"),
+      problem.includes("manifest.json"),
   );
 }

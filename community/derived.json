@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T19:47:22.622Z",
+  "generatedAt": "2026-08-20T20:00:10.624Z",
   "addons": {
     "asset-and-cash-timeline": {
       "id": "asset-and-cash-timeline",
@@ -47,8 +47,8 @@
         "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
       },
       "compatibility": {
-        "state": "outdated",
-        "detail": "Built against SDK 2.0.0, which the current addon runtime cannot load."
+        "state": "predates-sandbox",
+        "detail": "Built against SDK 2.0.0, before the 3.6 sandbox change. It may not work on current Wealthfolio."
       },
       "notices": [],
       "problems": [],
@@ -88,8 +88,8 @@
         "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
       },
       "compatibility": {
-        "state": "outdated",
-        "detail": "Built against SDK 2.0.0, which the current addon runtime cannot load."
+        "state": "predates-sandbox",
+        "detail": "Built against SDK 2.0.0, before the 3.6 sandbox change. It may not work on current Wealthfolio."
       },
       "notices": [],
       "problems": [
@@ -151,7 +151,7 @@
         "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
       },
       "compatibility": {
-        "state": "ok",
+        "state": "current",
         "detail": "Built against SDK 3.6.0."
       },
       "notices": [],
@@ -210,7 +210,7 @@
         "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
       },
       "compatibility": {
-        "state": "legacy",
+        "state": "predates-sandbox",
         "detail": "Built against SDK 3.1.1, before the 3.6 sandbox change. It may not work on current Wealthfolio."
       },
       "notices": [],
@@ -261,7 +261,7 @@
         "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
       },
       "compatibility": {
-        "state": "ok",
+        "state": "current",
         "detail": "Built against SDK 3.6.0."
       },
       "notices": [
@@ -314,8 +314,8 @@
         "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
       },
       "compatibility": {
-        "state": "outdated",
-        "detail": "Built against SDK 2.0.0, which the current addon runtime cannot load."
+        "state": "predates-sandbox",
+        "detail": "Built against SDK 2.0.0, before the 3.6 sandbox change. It may not work on current Wealthfolio."
       },
       "notices": [
         "not-financial-advice",

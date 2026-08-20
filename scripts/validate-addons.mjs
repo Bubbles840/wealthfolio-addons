@@ -135,7 +135,7 @@ function validateDerived(record) {
     warnings.push(`${prefix}: ${warning}`);
   }
 
-  if (metadata.status === "active" && entry.compatibility?.state === "outdated") {
+  if (metadata.status === "active" && entry.compatibility?.state === "predates-sandbox") {
     warnings.push(`${prefix}: ${entry.compatibility.detail}`);
   }
 }
