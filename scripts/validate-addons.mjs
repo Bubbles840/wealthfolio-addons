@@ -2,11 +2,16 @@ import path from "node:path";
 import { existsSync, statSync } from "node:fs";
 import { getAddonRecords, repoRoot } from "./lib/addon-records.mjs";
 import { createStoreValidator, formatSchemaErrors } from "./lib/schema.mjs";
+import { inspectImage } from "./lib/images.mjs";
 import { requiredNotices } from "./lib/notices.mjs";
 import { downloadUrl, r2Key } from "./lib/distribution.mjs";
 
 const MAX_MEDIA_BYTES = 2 * 1024 * 1024;
-const ALLOWED_MEDIA_EXTENSIONS = new Set([".webp", ".png"]);
+const MIN_MEDIA_WIDTH = 800;
+const ALLOWED_MEDIA_EXTENSIONS = new Map([
+  [".webp", "webp"],
+  [".png", "png"],
+]);
 
 const records = await getAddonRecords();
 const validateStore = await createStoreValidator();
@@ -101,6 +106,7 @@ function validateNotices(record) {
 
 function validateMedia(record) {
   const { metadata } = record;
+  const isOfficial = metadata.trust === "official";
 
   for (const [field, imagePath] of Object.entries(metadata.media ?? {})) {
     const prefix = `${record.relativePath}: media.${field}`;
@@ -111,19 +117,110 @@ function validateMedia(record) {
     }
 
     const extension = path.extname(imagePath).toLowerCase();
-    if (!ALLOWED_MEDIA_EXTENSIONS.has(extension)) {
+    const expectedFormat = ALLOWED_MEDIA_EXTENSIONS.get(extension);
+    if (!expectedFormat) {
       errors.push(`${prefix} must be a .webp or .png file, got "${extension || imagePath}"`);
       continue;
     }
 
     const absolutePath = path.join(record.addonDir, imagePath);
     if (!existsSync(absolutePath)) {
-      warnings.push(`${prefix} file is not present yet: ${imagePath}`);
+      // The catalog renders official covers, so a declared-but-absent file is a
+      // broken listing, not a nice-to-have.
+      const message = `${prefix} file is missing: ${imagePath}`;
+      if (isOfficial) errors.push(message);
+      else warnings.push(`${prefix} file is not present yet: ${imagePath}`);
       continue;
     }
 
     if (statSync(absolutePath).size > MAX_MEDIA_BYTES) {
       errors.push(`${prefix} exceeds ${MAX_MEDIA_BYTES / 1024 / 1024} MiB`);
+      continue;
+    }
+
+    // An extension is a claim; check the bytes.
+    const image = inspectImage(absolutePath);
+    if (!image) {
+      errors.push(`${prefix} is not a valid PNG or WebP image`);
+      continue;
+    }
+
+    if (image.format !== expectedFormat) {
+      errors.push(
+        `${prefix} is a ${image.format} image but is named .${expectedFormat}`,
+      );
+      continue;
+    }
+
+    if (!image.width || !image.height) {
+      errors.push(`${prefix} has unreadable dimensions`);
+      continue;
+    }
+
+    if (image.width < MIN_MEDIA_WIDTH) {
+      errors.push(
+        `${prefix} is ${image.width}x${image.height}; covers must be at least ${MIN_MEDIA_WIDTH}px wide`,
+      );
+      continue;
+    }
+
+    if (image.height > image.width) {
+      warnings.push(
+        `${prefix} is portrait (${image.width}x${image.height}); covers are displayed in a landscape frame`,
+      );
+    }
+  }
+}
+
+function collectUrls(metadata) {
+  const found = [];
+  const add = (label, value) => {
+    if (typeof value === "string") found.push([label, value]);
+  };
+
+  add("repository", metadata.repository);
+  add("supportUrl", metadata.supportUrl);
+  add("privacyUrl", metadata.privacyUrl);
+  if (metadata.author && typeof metadata.author === "object") add("author.url", metadata.author.url);
+  add("source.repository", metadata.source?.repository);
+  add("release.changelogUrl", metadata.release?.changelogUrl);
+  add("distribution.downloadUrl", metadata.distribution?.downloadUrl);
+  (metadata.dataHandling?.externalServices ?? []).forEach((service, index) => {
+    add(`dataHandling.externalServices[${index}].url`, service?.url);
+  });
+
+  return found;
+}
+
+/**
+ * The schema pattern is a coarse gate. Parse every URL properly as well, so a
+ * string that merely looks acceptable cannot smuggle credentials or a
+ * non-HTTPS scheme into a page users click.
+ */
+function validateUrls(record) {
+  for (const [label, value] of collectUrls(record.metadata)) {
+    const prefix = `${record.relativePath}: ${label}`;
+    let url;
+
+    try {
+      url = new URL(value);
+    } catch {
+      errors.push(`${prefix} is not a valid URL: "${value}"`);
+      continue;
+    }
+
+    if (url.protocol !== "https:") {
+      errors.push(`${prefix} must use https, got "${url.protocol}"`);
+      continue;
+    }
+
+    if (url.username || url.password) {
+      errors.push(`${prefix} must not embed credentials`);
+      continue;
+    }
+
+    if (!url.hostname.includes(".") || url.hostname.endsWith(".")) {
+      errors.push(`${prefix} has a suspicious hostname: "${url.hostname}"`);
     }
   }
 }
@@ -179,6 +276,7 @@ for (const record of records) {
   }
 
   validateDistribution(record);
+  validateUrls(record);
   validateNotices(record);
   validateMedia(record);
   validateBranding(record);

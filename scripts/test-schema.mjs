@@ -132,6 +132,25 @@ rejects("unknown data type", communityBase({
 rejects("unknown top-level field", communityBase({ downloadUrl: "https://example.com/a.zip" }));
 rejects("unknown trust tier", communityBase({ trust: "verified" }));
 
+// --- regression: official media must be usable (review finding P2) ---
+rejects("official entry with an empty media object", officialBase({ media: {} }));
+rejects("official entry with only a light cover", officialBase({ media: { coverLight: "media/cover-light.webp" } }));
+
+// --- regression: publisher text must be genuinely plain (review finding P2) ---
+rejects("pipe in name would break the generated table", communityBase({ name: "A | B" }));
+rejects("html in description", communityBase({ description: "see <b>official</b> build" }));
+rejects("newline in description", communityBase({ description: "line one\nline two" }));
+rejects("backtick in name", communityBase({ name: "My `code` addon" }));
+
+// --- regression: valid HTTPS shapes must be accepted (review finding P2) ---
+accepts("query-only URL", communityBase({ supportUrl: "https://example.com?section=support" }));
+accepts("fragment-only URL", communityBase({ supportUrl: "https://example.com#privacy" }));
+accepts("port in URL", communityBase({ repository: "https://example.com:8443/repo" }));
+rejects("credentials survive the looser pattern", communityBase({
+  repository: "https://user:pass@example.com/x",
+}));
+rejects("http survives the looser pattern", communityBase({ repository: "http://example.com/x" }));
+
 // --- notice taxonomy --------------------------------------------------------
 expect(
   "tax tag requires the tax notice",

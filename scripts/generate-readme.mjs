@@ -9,15 +9,28 @@ import {
   repoRoot,
 } from "./lib/addon-records.mjs";
 
+/**
+ * Publisher-supplied text lands in a Markdown table. The schema already forbids
+ * newlines and angle brackets, but escape the table separator and the
+ * characters that would otherwise render as markup: a listing must not be able
+ * to restructure the table or inject a link into it.
+ */
+function cell(value) {
+  return String(value ?? "")
+    .replace(/[\\`*_[\]|]/g, (character) => `\\${character}`)
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function communityRow(record) {
   const metadata = record.metadata;
   const repo = metadata.repository ? `[Repo](${metadata.repository})` : "";
-  return `| ${displayName(record)} | ${authorName(metadata.author)} | ${description(record)} | ${metadata.status} | ${repo} |`;
+  return `| ${cell(displayName(record))} | ${cell(authorName(metadata.author))} | ${cell(description(record))} | ${cell(metadata.status)} | ${repo} |`;
 }
 
 function officialRow(record) {
   const metadata = record.metadata;
-  return `| ${displayName(record)} | ${description(record)} | ${metadata.status} | ${releaseVersion(record)} |`;
+  return `| ${cell(displayName(record))} | ${cell(description(record))} | ${cell(metadata.status)} | ${cell(releaseVersion(record))} |`;
 }
 
 const records = await getAddonRecords();

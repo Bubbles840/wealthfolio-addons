@@ -10,7 +10,7 @@
       "description": "HTTPS URL without embedded credentials.",
       "type": "string",
       "maxLength": 500,
-      "pattern": "^https://[A-Za-z0-9.-]+(:[0-9]{1,5})?(/[^\\s]*)?$"
+      "pattern": "^https://[^\\s/?#@]+(?:[/?#][^\\s]*)?$"
     },
     "semver": {
       "type": "string",
@@ -32,15 +32,18 @@
       "$ref": "#/$defs/slug"
     },
     "name": {
+      "description": "Plain text. No markup, no line breaks.",
       "type": "string",
       "minLength": 1,
-      "maxLength": 60
+      "maxLength": 60,
+      "pattern": "^[^\\n\\r\\t<>|`]+$"
     },
     "description": {
-      "description": "Plain text only. Rendered without markup by the website.",
+      "description": "Plain text only. Rendered without markup by the website and escaped in generated tables.",
       "type": "string",
       "minLength": 1,
-      "maxLength": 300
+      "maxLength": 300,
+      "pattern": "^[^\\n\\r\\t<>|`]+$"
     },
     "author": {
       "description": "The publisher responsible for the addon, not merely the GitHub account that opened the pull request.",
@@ -285,7 +288,13 @@
         "required": ["trust"]
       },
       "then": {
-        "required": ["release", "distribution", "media"]
+        "required": ["release", "distribution", "media"],
+        "properties": {
+          "media": {
+            "type": "object",
+            "required": ["coverLight", "coverDark"]
+          }
+        }
       }
     },
     {

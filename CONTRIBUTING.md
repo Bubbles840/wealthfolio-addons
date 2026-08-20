@@ -158,8 +158,8 @@ If you are moving an addon from the old app repository layout, read
 
 ## Screenshots
 
-Community listings do not need screenshots. Official addons use 16:9 WebP,
-stored in `media/` — **not** `assets/`:
+Community listings do not need screenshots. Official addons use a wide
+landscape WebP, stored in `media/` — **not** `assets/`:
 
 ```text
 official/<addon-id>/media/cover-light.webp
@@ -170,8 +170,11 @@ official/<addon-id>/media/cover-dark.webp
 indexed as runtime packaged assets. Store art belongs to the catalog, not to
 the running addon, so it lives in `media/` and never reaches a user's install.
 
-PNG is accepted; update `addon.store.json` to match the actual file names. Files
-are limited to 2 MiB each. SVG is not accepted.
+PNG is accepted; update `addon.store.json` to match the actual file names.
+Validation reads the file signature, so an extension alone will not do: covers
+must be a real PNG or WebP, at least 800px wide, landscape, and under 2 MiB.
+SVG is not accepted. Both `coverLight` and `coverDark` are required for official
+addons, and a declared file that is missing fails the build.
 
 The catalog CDN serves these covers under **version-less** names, so a version
 bump never breaks a listing's screenshot:
