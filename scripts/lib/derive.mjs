@@ -26,9 +26,17 @@ import { requiredNotices } from "./notices.mjs";
  */
 const SANDBOX_SDK = [3, 6];
 
+/**
+ * Strict on purpose. parseInt happily reads "3.6evil" as 3.6, and this value
+ * decides whether an addon is credited with the sandbox guarantee — so anything
+ * that is not unambiguously a version is unknown, not current.
+ */
+const VERSION_PATTERN = /^(\d+)\.(\d+)(?:\.(\d+))?(?:[-+][0-9A-Za-z.-]+)?$/;
+
 function versionParts(version) {
-  const parts = String(version ?? "").split(".").map((part) => Number.parseInt(part, 10));
-  return parts.every((part) => Number.isFinite(part)) && parts.length >= 2 ? parts : null;
+  const match = VERSION_PATTERN.exec(String(version ?? "").trim());
+  if (!match) return null;
+  return [Number(match[1]), Number(match[2]), match[3] ? Number(match[3]) : 0];
 }
 
 /**
@@ -44,7 +52,7 @@ function versionParts(version) {
  * Reporting "no data leaves your device" for such an addon would be false, and
  * published to users as though Wealthfolio had checked.
  */
-function deriveDataHandling(manifest, compatibility) {
+export function deriveDataHandling(manifest, compatibility) {
   const networkPermission = (manifest.permissions ?? []).find(
     (permission) => permission?.category === "network",
   );
@@ -73,7 +81,9 @@ function deriveDataHandling(manifest, compatibility) {
     };
   }
 
-  const hosts = manifest.network?.allowedHosts ?? [];
+  const hosts = (manifest.network?.allowedHosts ?? []).filter(
+    (host) => typeof host === "string" && host.trim() !== "",
+  );
   return {
     userDataLeavesDevice: true,
     externalServices: hosts.map((host) => ({ host })),
@@ -81,7 +91,7 @@ function deriveDataHandling(manifest, compatibility) {
   };
 }
 
-function deriveCompatibility(manifest) {
+export function deriveCompatibility(manifest) {
   const parts = versionParts(manifest.sdkVersion);
 
   if (!parts) {
@@ -100,6 +110,43 @@ function deriveCompatibility(manifest) {
   }
 
   return { state: "current", detail: `Built against SDK ${manifest.sdkVersion}.` };
+}
+
+/**
+ * A publisher's manifest is untrusted input. Anything structurally wrong has to
+ * become a blocked listing that reconciliation can report, never an exception
+ * that aborts the run and suppresses the very pull request meant to flag it.
+ *
+ * Returns the manifest when it is safe to read, or null with the reasons.
+ */
+export function checkManifestStructure(manifest) {
+  const problems = [];
+
+  if (manifest === null || manifest === undefined) {
+    return { manifest: null, problems };
+  }
+
+  if (typeof manifest !== "object" || Array.isArray(manifest)) {
+    return { manifest: null, problems: ["manifest.json is not an object"] };
+  }
+
+  if (manifest.permissions !== undefined && !Array.isArray(manifest.permissions)) {
+    problems.push("manifest.json declares permissions that are not a list");
+  }
+
+  if (
+    manifest.network !== undefined &&
+    (typeof manifest.network !== "object" || manifest.network === null)
+  ) {
+    problems.push("manifest.json declares a network block that is not an object");
+  } else if (
+    manifest.network?.allowedHosts !== undefined &&
+    !Array.isArray(manifest.network.allowedHosts)
+  ) {
+    problems.push("manifest.json declares network.allowedHosts that are not a list");
+  }
+
+  return { manifest: problems.length ? null : manifest, problems };
 }
 
 /**
@@ -156,6 +203,10 @@ export async function deriveListing(metadata) {
     }
   }
 
+  const structure = checkManifestStructure(manifest);
+  problems.push(...structure.problems);
+  manifest = structure.manifest;
+
   const compatibility = manifest
     ? deriveCompatibility(manifest)
     : { state: "unknown", detail: "No manifest to read." };
@@ -169,7 +220,9 @@ export async function deriveListing(metadata) {
   // service without declaring anything, so a missing network permission says
   // nothing about whether its credentials are usable — the Lunch Money addon
   // stores a key and calls the API directly.
-  const categories = new Set((manifest?.permissions ?? []).map((p) => p?.category));
+  const categories = new Set(
+    (Array.isArray(manifest?.permissions) ? manifest.permissions : []).map((p) => p?.category),
+  );
   if (
     compatibility.state === "current" &&
     categories.has("secrets") &&
@@ -198,7 +251,7 @@ export async function deriveListing(metadata) {
           version: manifest.version ?? null,
           sdkVersion: manifest.sdkVersion ?? null,
           minWealthfolioVersion: manifest.minWealthfolioVersion ?? null,
-          permissions: (manifest.permissions ?? []).map((permission) => ({
+          permissions: (Array.isArray(manifest.permissions) ? manifest.permissions : []).map((permission) => ({
             category: permission?.category ?? null,
             purpose: permission?.purpose ?? null,
           })),
@@ -240,6 +293,7 @@ export function blockingProblems(derived, metadata = {}) {
       problem.includes("could not be read") ||
       problem.includes("not a public github.com URL") ||
       problem.includes("manifest.json") ||
+      problem.includes("not an object") ||
       problem.includes("data handling cannot be derived"),
   );
 }

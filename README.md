@@ -183,6 +183,8 @@ pnpm bundle:official
 | `pnpm bundle:official`     | Cleans, builds, and zips every official addon for release handoff.                                              |
 | `pnpm type-check:official` | Runs TypeScript checks for every official addon without emitting files.                                         |
 | `pnpm test:schema`         | Runs the store-schema regression fixtures and validates the submission templates.                              |
+| `pnpm test:derive`         | Runs the derivation regression tests against untrusted-manifest and version-parsing cases.                     |
+| `pnpm derive:community`    | Re-reads publisher repositories and refreshes `community/derived.json`. The only step that uses the network.   |
 | `pnpm validate:addons`     | Validates addon metadata against the schema, plus ids, layout, distribution keys, notices, and media.          |
 | `pnpm release:official`    | Builds, hashes the built artifacts, and emits the catalog SQL for those exact bytes.                            |
 | `pnpm generate:readme`     | Regenerates the official and community addon tables from `addon.store.json` files.                              |
