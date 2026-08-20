@@ -49,11 +49,19 @@ function deriveDataHandling(manifest, compatibility) {
     (permission) => permission?.category === "network",
   );
 
-  if (compatibility.state !== "current") {
+  if (compatibility.state === "predates-sandbox") {
     return {
       userDataLeavesDevice: null,
       externalServices: [],
       basis: "Built before the 3.6 sandbox, when addons could reach the network without declaring it, so the manifest cannot show where data goes.",
+    };
+  }
+
+  if (compatibility.state !== "current") {
+    return {
+      userDataLeavesDevice: null,
+      externalServices: [],
+      basis: "The manifest declares no usable SDK version, so it is not known whether the sandbox constrains this addon's network access.",
     };
   }
 
@@ -157,10 +165,16 @@ export async function deriveListing(metadata) {
   // cross-referenced later, but a mismatch breaks nothing today.
   const runtimeId = manifest?.id ?? null;
 
-  // Storing credentials for a service the addon has no permission to reach
-  // means either the manifest is stale or the feature cannot work.
+  // Only meaningful under the sandbox. Before 3.6 an addon could reach a
+  // service without declaring anything, so a missing network permission says
+  // nothing about whether its credentials are usable — the Lunch Money addon
+  // stores a key and calls the API directly.
   const categories = new Set((manifest?.permissions ?? []).map((p) => p?.category));
-  if (categories.has("secrets") && !categories.has("network")) {
+  if (
+    compatibility.state === "current" &&
+    categories.has("secrets") &&
+    !categories.has("network")
+  ) {
     warnings.push(
       "declares the secrets permission but not network, so any service it stores credentials for is unreachable",
     );

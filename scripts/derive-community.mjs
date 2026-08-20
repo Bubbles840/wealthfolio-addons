@@ -45,7 +45,7 @@ for (const record of records) {
   try {
     const derived = await deriveListing(record.metadata);
     addons[record.metadata.id] = derived;
-    const blocking = blockingProblems(derived);
+    const blocking = blockingProblems(derived, record.metadata);
     process.stderr.write(
       blocking.length ? `blocked: ${blocking.join("; ")}\n` : `ok (${derived.license})\n`,
     );

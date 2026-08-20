@@ -28,6 +28,7 @@ const COMPATIBILITY_LABEL = {
  */
 function cell(value) {
   return String(value ?? "")
+    .replace(/[<>]/g, (character) => (character === "<" ? "&lt;" : "&gt;"))
     .replace(/[\\`*_[\]|]/g, (character) => `\\${character}`)
     .replace(/\s+/g, " ")
     .trim();

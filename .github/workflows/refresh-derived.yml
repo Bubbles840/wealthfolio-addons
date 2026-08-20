@@ -46,7 +46,12 @@ jobs:
       - name: Regenerate the listing tables
         run: pnpm generate
 
-      - name: Check the refreshed facts still validate
+      # Diagnostic only. If a publisher has deleted their licence or repository,
+      # an active listing becomes invalid — which is exactly when this pull
+      # request needs to be opened, not suppressed. The pull request's own CI
+      # reports the failure to whoever reviews it.
+      - name: Report how the refreshed facts validate
+        continue-on-error: true
         run: pnpm validate:addons
 
       - name: Open a pull request if anything moved
@@ -61,10 +66,20 @@ jobs:
           branch="chore/refresh-derived-facts"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # actions/checkout fetches only the default branch, so the
+          # remote-tracking ref for an open refresh branch does not exist and a
+          # bare --force-with-lease would reject the push as stale information.
+          if git fetch origin "$branch" 2>/dev/null; then
+            lease="--force-with-lease=$branch:$(git rev-parse FETCH_HEAD)"
+          else
+            lease="--force-with-lease=$branch:"
+          fi
+
           git checkout -B "$branch"
           git add community/derived.json community/README.md
           git commit -m "chore(addons): refresh derived listing facts"
-          git push --force-with-lease origin "$branch"
+          git push "$lease" origin "$branch"
 
           if gh pr view "$branch" --json state --jq .state 2>/dev/null | grep -q OPEN; then
             echo "Existing pull request updated."

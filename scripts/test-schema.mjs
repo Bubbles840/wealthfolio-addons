@@ -142,6 +142,19 @@ rejects("non-GitHub repository", communityBase({ repository: "https://gitlab.com
 rejects("repository deep link", communityBase({ repository: "https://github.com/o/r/tree/main" }));
 accepts("canonical GitHub repository", communityBase({ repository: "https://github.com/o/r" }));
 
+// --- regression: publisher names are rendered, so they must be plain (review P2) ---
+rejects("HTML in author object", communityBase({ author: { name: "<a href=x>c</a>" } }));
+rejects("HTML in author string", communityBase({ author: "<a href=x>c</a>" }));
+rejects("pipe in author", communityBase({ author: { name: "a | b" } }));
+rejects("HTML in an external service name", communityBase({
+  privacyUrl: "https://example.com/p",
+  dataHandling: {
+    leavesDevice: true,
+    externalServices: [{ name: "<b>Bank</b>", url: "https://example.com" }],
+  },
+}));
+accepts("plain author", communityBase({ author: { name: "someone" } }));
+
 // --- notice taxonomy --------------------------------------------------------
 expect(
   "tax tag requires the tax notice",

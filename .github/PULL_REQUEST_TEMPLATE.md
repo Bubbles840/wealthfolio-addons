@@ -44,9 +44,14 @@ I have read [POLICIES.md](https://github.com/wealthfolio/wealthfolio-addons/blob
 
 - [ ] File is at `community/directory/<addon-id>/addon.store.json`, and the
       directory name matches the `id`.
-- [ ] `commercialModel` is set. Licence, data handling, compatibility, and
-      standard notices are derived from the repository — do not fill them in.
+- [ ] `commercialModel` is set. Licence, compatibility, and standard notices are
+      derived from your repository — do not fill those in.
 - [ ] The repository has a licence file and a `manifest.json` at its root.
+- [ ] **If your manifest targets an SDK below 3.6**, add `dataHandling`
+      yourself (and a `privacyUrl` if anything leaves the device). Before 3.6 an
+      addon could reach the network without declaring it, so the manifest cannot
+      show where data goes and Wealthfolio will not guess. Rebuilding against
+      the current SDK removes the need.
 - [ ] All URLs are HTTPS and resolve.
 - [ ] `pnpm validate:addons` and `pnpm generate` pass locally with no diff.
 

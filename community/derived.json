@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T20:12:41.788Z",
+  "generatedAt": "2026-08-20T20:28:59.484Z",
   "addons": {
     "asset-and-cash-timeline": {
       "id": "asset-and-cash-timeline",
@@ -215,9 +215,7 @@
       },
       "notices": [],
       "problems": [],
-      "warnings": [
-        "declares the secrets permission but not network, so any service it stores credentials for is unreachable"
-      ]
+      "warnings": []
     },
     "rebalancer": {
       "id": "rebalancer",

@@ -23,6 +23,12 @@
       "maxLength": 64,
       "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$"
     },
+    "plainText": {
+      "description": "Publisher-supplied text rendered into Markdown and HTML. No markup, no line breaks.",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^\\n\\r\\t<>|`]+$"
+    },
     "slug": {
       "type": "string",
       "maxLength": 64,
@@ -55,8 +61,8 @@
       "description": "The publisher responsible for the addon, not merely the GitHub account that opened the pull request.",
       "oneOf": [
         {
+          "$ref": "#/$defs/plainText",
           "type": "string",
-          "minLength": 1,
           "maxLength": 80
         },
         {
@@ -65,8 +71,8 @@
           "required": ["name"],
           "properties": {
             "name": {
+              "$ref": "#/$defs/plainText",
               "type": "string",
-              "minLength": 1,
               "maxLength": 80
             },
             "url": {
@@ -166,8 +172,8 @@
             "required": ["name", "url"],
             "properties": {
               "name": {
+                "$ref": "#/$defs/plainText",
                 "type": "string",
-                "minLength": 1,
                 "maxLength": 80
               },
               "url": {
