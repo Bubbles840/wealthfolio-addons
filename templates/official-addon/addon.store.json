@@ -18,8 +18,8 @@
     "r2Path": "my-official-addon/my-official-addon-1.0.0.zip"
   },
   "media": {
-    "coverLight": "assets/cover-light.webp",
-    "coverDark": "assets/cover-dark.webp"
+    "coverLight": "media/cover-light.webp",
+    "coverDark": "media/cover-dark.webp"
   },
   "supportUrl": "https://github.com/wealthfolio/wealthfolio-addons/issues"
 }

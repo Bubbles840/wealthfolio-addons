@@ -158,12 +158,28 @@ If you are moving an addon from the old app repository layout, read
 
 ## Screenshots
 
-Community listings do not need screenshots. Official addons use 16:9 WebP:
+Community listings do not need screenshots. Official addons use 16:9 WebP,
+stored in `media/` — **not** `assets/`:
 
 ```text
-assets/cover-light.webp
-assets/cover-dark.webp
+official/<addon-id>/media/cover-light.webp
+official/<addon-id>/media/cover-dark.webp
 ```
+
+`assets/` is bundled into the shipped addon zip and, from Wealthfolio 3.7,
+indexed as runtime packaged assets. Store art belongs to the catalog, not to
+the running addon, so it lives in `media/` and never reaches a user's install.
 
 PNG is accepted; update `addon.store.json` to match the actual file names. Files
 are limited to 2 MiB each. SVG is not accepted.
+
+The catalog CDN serves these covers under **version-less** names, so a version
+bump never breaks a listing's screenshot:
+
+```text
+https://assets.wealthfolio.app/images/addons/<addon-id>.webp
+https://assets.wealthfolio.app/images/addons/<addon-id>-dark.webp
+```
+
+Re-upload a cover when the addon's interface actually changes, not on every
+release.
