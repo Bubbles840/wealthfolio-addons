@@ -122,8 +122,29 @@ Each asset is limited to 5 MiB, each addon to 25 MiB and 256 files, and symlinks
 are not accepted.
 
 Worker and service-worker entry points, popups/new windows, and direct browser
-network requests are intentionally blocked. Use `ctx.api.network.request()` for
-approved HTTPS integrations.
+network requests are intentionally blocked. Outbound HTTPS goes through
+`ctx.api.network.request()`, which is not a baseline capability. Declare both
+the `network` permission and the hosts the addon may reach, or the call throws
+`AddonPermissionDenied`:
+
+```json
+{
+  "permissions": [
+    {
+      "category": "network",
+      "functions": ["request"],
+      "purpose": "Fetch daily quotes from the market data provider"
+    }
+  ],
+  "network": {
+    "allowedHosts": ["api.example.com"]
+  }
+}
+```
+
+`network.allowedHosts` is required whenever an addon declares network access.
+The user approves hosts at install time, and only that approved subset is
+reachable through the broker.
 
 The QueryClient from `ctx.api.query.getClient()` is scoped to one addon
 sandbox. Addon invalidation and refetch operations with serializable
