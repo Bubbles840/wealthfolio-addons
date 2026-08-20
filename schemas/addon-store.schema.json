@@ -12,6 +12,12 @@
       "maxLength": 500,
       "pattern": "^https://[^\\s/?#@]+(?:[/?#][^\\s]*)?$"
     },
+    "githubRepoUrl": {
+      "description": "Canonical GitHub repository URL. No query, fragment, or trailing path — the value is rendered as a link and read by the derivation.",
+      "type": "string",
+      "maxLength": 200,
+      "pattern": "^https://github\\.com/[A-Za-z0-9][A-Za-z0-9._-]*/[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
     "semver": {
       "type": "string",
       "maxLength": 64,
@@ -90,7 +96,7 @@
       "uniqueItems": true
     },
     "repository": {
-      "$ref": "#/$defs/httpsUrl"
+      "$ref": "#/$defs/githubRepoUrl"
     },
     "supportUrl": {
       "$ref": "#/$defs/httpsUrl"
@@ -178,7 +184,7 @@
       "required": ["repository"],
       "properties": {
         "repository": {
-          "$ref": "#/$defs/httpsUrl"
+          "$ref": "#/$defs/githubRepoUrl"
         },
         "tag": {
           "type": "string",

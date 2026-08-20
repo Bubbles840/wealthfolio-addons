@@ -33,10 +33,22 @@ function cell(value) {
     .trim();
 }
 
+/**
+ * Markdown link destinations end a URL at the first unescaped `)`, so a URL
+ * containing one can close the link early and start a second, attacker-chosen
+ * one. The schema already restricts `repository` to a canonical GitHub URL;
+ * encoding here means a future loosening cannot reopen the hole.
+ */
+function linkDestination(url) {
+  return String(url).replace(/[()\\<>\[\]]/g, (character) =>
+    `%${character.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0")}`,
+  );
+}
+
 function communityRow(record) {
   const metadata = record.metadata;
   const facts = derived[metadata.id] ?? {};
-  const repo = metadata.repository ? `[Repo](${metadata.repository})` : "";
+  const repo = metadata.repository ? `[Repo](${linkDestination(metadata.repository)})` : "";
   const compatibility = COMPATIBILITY_LABEL[facts.compatibility?.state] ?? "unknown";
   return `| ${cell(displayName(record))} | ${cell(authorName(metadata.author))} | ${cell(metadata.status)} | ${cell(facts.license ?? "none")} | ${cell(compatibility)} | ${repo} |`;
 }

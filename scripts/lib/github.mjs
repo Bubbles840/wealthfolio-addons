@@ -29,11 +29,18 @@ export function parseRepository(repositoryUrl) {
     return null;
   }
 
-  if (url.hostname !== "github.com" && url.hostname !== "www.github.com") return null;
+  if (url.hostname !== "github.com") return null;
 
-  const [owner, repo] = url.pathname.replace(/^\//, "").replace(/\.git$/, "").split("/");
+  // A query or fragment is never part of a repository's identity, and silently
+  // dropping one means validation reads a different URL than the page links to.
+  if (url.search || url.hash) return null;
+
+  const segments = url.pathname.replace(/^\//, "").replace(/\.git$/, "").split("/");
+  if (segments.length !== 2) return null;
+
+  const [owner, repo] = segments;
   if (!owner || !repo) return null;
-  return { owner, repo: repo.replace(/\/$/, "") };
+  return { owner, repo };
 }
 
 async function request(path) {

@@ -84,20 +84,22 @@ Licence, data handling, compatibility, and last-updated are **derived** from the
 publisher's repository, recorded with the commit they came from, and displayed
 as derived — attributed and dated, never as the publisher's declaration.
 
-Data handling is derived because it is enforced: under the 3.6+ sandbox an addon
-with no `network` permission cannot make outbound requests, and one that has it
-can only reach the hosts it declared and the user approved. That is stronger
-than any promise in a metadata file.
+Data handling is derived because for a 3.6+ addon it is enforced: without the
+`network` permission the runtime blocks outbound requests, and with it the addon
+reaches only the hosts it declared and the user approved. That is stronger than
+any promise in a metadata file.
+
+It does not reach backwards. An addon built before 3.6 ran on a host where
+direct requests worked, so a missing permission proves nothing — and Wealthfolio
+will not tell users an addon keeps data local when it cannot tell. Such a
+listing needs the publisher's own `dataHandling` declaration before it can be
+published.
 
 A listing cannot be published while its repository has no detectable licence
 (without one, users have no legal right to use the addon), while it has no
-readable manifest, or while its addon is built against an SDK the current
-runtime cannot load. These are the publisher's to fix, and Wealthfolio will say
-exactly which applies.
-
-If something users should know before installing cannot be seen in the manifest
-— a companion service, an unusual data source — declare it in the optional
-`dataHandling` block with a `privacyUrl`.
+readable manifest, or while its data story is neither derivable nor declared.
+SDK age alone never blocks a listing — it shows as a caution. These are the
+publisher's to fix, and Wealthfolio will say exactly which applies.
 
 ## Standard notices
 

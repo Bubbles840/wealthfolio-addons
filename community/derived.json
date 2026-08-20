@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T20:00:10.624Z",
+  "generatedAt": "2026-08-20T20:12:41.788Z",
   "addons": {
     "asset-and-cash-timeline": {
       "id": "asset-and-cash-timeline",
@@ -42,9 +42,9 @@
         ]
       },
       "dataHandling": {
-        "userDataLeavesDevice": false,
+        "userDataLeavesDevice": null,
         "externalServices": [],
-        "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
+        "basis": "Built before the 3.6 sandbox, when addons could reach the network without declaring it, so the manifest cannot show where data goes."
       },
       "compatibility": {
         "state": "predates-sandbox",
@@ -83,9 +83,9 @@
         ]
       },
       "dataHandling": {
-        "userDataLeavesDevice": false,
+        "userDataLeavesDevice": null,
         "externalServices": [],
-        "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
+        "basis": "Built before the 3.6 sandbox, when addons could reach the network without declaring it, so the manifest cannot show where data goes."
       },
       "compatibility": {
         "state": "predates-sandbox",
@@ -205,9 +205,9 @@
         ]
       },
       "dataHandling": {
-        "userDataLeavesDevice": false,
+        "userDataLeavesDevice": null,
         "externalServices": [],
-        "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
+        "basis": "Built before the 3.6 sandbox, when addons could reach the network without declaring it, so the manifest cannot show where data goes."
       },
       "compatibility": {
         "state": "predates-sandbox",
@@ -309,9 +309,9 @@
         ]
       },
       "dataHandling": {
-        "userDataLeavesDevice": false,
+        "userDataLeavesDevice": null,
         "externalServices": [],
-        "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
+        "basis": "Built before the 3.6 sandbox, when addons could reach the network without declaring it, so the manifest cannot show where data goes."
       },
       "compatibility": {
         "state": "predates-sandbox",

@@ -124,7 +124,7 @@ function validateDerived(record) {
     return;
   }
 
-  const blocking = blockingProblems(entry);
+  const blocking = blockingProblems(entry, metadata);
   if (metadata.status === "active" && blocking.length) {
     for (const problem of blocking) {
       errors.push(`${prefix}: cannot publish — ${problem}`);

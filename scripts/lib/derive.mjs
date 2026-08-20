@@ -32,15 +32,30 @@ function versionParts(version) {
 }
 
 /**
- * Under the 3.6+ sandbox an addon cannot reach the network at all without the
+ * Under the 3.6+ sandbox an addon cannot reach the network without the
  * `network` permission: direct browser requests are blocked and the broker
- * refuses undeclared hosts. So the absence of that permission is enforced by
- * the runtime, not merely claimed by the publisher.
+ * refuses undeclared hosts. That makes the absence of the permission a fact
+ * about the runtime rather than a claim by the publisher.
+ *
+ * The guarantee does not extend backwards. A pre-3.6 addon was written for a
+ * host where `fetch` worked, so a missing permission says nothing at all —
+ * the Lunch Money addon calls the Lunch Money API with the user's key and
+ * declares no network permission, because on SDK 3.1.1 it did not need one.
+ * Reporting "no data leaves your device" for such an addon would be false, and
+ * published to users as though Wealthfolio had checked.
  */
-function deriveDataHandling(manifest) {
+function deriveDataHandling(manifest, compatibility) {
   const networkPermission = (manifest.permissions ?? []).find(
     (permission) => permission?.category === "network",
   );
+
+  if (compatibility.state !== "current") {
+    return {
+      userDataLeavesDevice: null,
+      externalServices: [],
+      basis: "Built before the 3.6 sandbox, when addons could reach the network without declaring it, so the manifest cannot show where data goes.",
+    };
+  }
 
   if (!networkPermission) {
     return {
@@ -133,6 +148,10 @@ export async function deriveListing(metadata) {
     }
   }
 
+  const compatibility = manifest
+    ? deriveCompatibility(manifest)
+    : { state: "unknown", detail: "No manifest to read." };
+
   // The runtime keys installed addons by manifest id; the listing id is the
   // directory's page identity. They should match so the two can be
   // cross-referenced later, but a mismatch breaks nothing today.
@@ -171,8 +190,8 @@ export async function deriveListing(metadata) {
           })),
         }
       : null,
-    dataHandling: manifest ? deriveDataHandling(manifest) : null,
-    compatibility: manifest ? deriveCompatibility(manifest) : { state: "unknown", detail: "No manifest to read." },
+    dataHandling: manifest ? deriveDataHandling(manifest, compatibility) : null,
+    compatibility,
     notices: requiredNotices(metadata.tags),
     problems,
     warnings,
@@ -181,14 +200,32 @@ export async function deriveListing(metadata) {
 
 /**
  * Problems that prevent a listing from being published publicly: no licence to
- * use it under, or nothing readable to describe. Age is not one of them.
+ * use it under, or nothing readable to describe.
+ *
+ * Age alone is not one of them — but an unknown data story is, unless the
+ * publisher fills the gap themselves. Publishing a page that cannot say where
+ * a user's data goes is worse than publishing nothing.
  */
-export function blockingProblems(derived) {
-  return (derived.problems ?? []).filter(
+export function blockingProblems(derived, metadata = {}) {
+  const problems = [...(derived.problems ?? [])];
+
+  if (derived.dataHandling && derived.dataHandling.userDataLeavesDevice === null) {
+    const declared = metadata.dataHandling;
+    const declaredCompletely =
+      declared && (declared.leavesDevice === false || Boolean(metadata.privacyUrl));
+    if (!declaredCompletely) {
+      problems.push(
+        "data handling cannot be derived from a pre-3.6 manifest; the publisher must declare dataHandling (and a privacyUrl if anything leaves the device)",
+      );
+    }
+  }
+
+  return problems.filter(
     (problem) =>
       problem.includes("licence") ||
       problem.includes("could not be read") ||
       problem.includes("not a public github.com URL") ||
-      problem.includes("manifest.json"),
+      problem.includes("manifest.json") ||
+      problem.includes("data handling cannot be derived"),
   );
 }

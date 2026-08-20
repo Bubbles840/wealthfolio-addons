@@ -105,6 +105,7 @@ rejects(
 );
 rejects("non-SPDX license", communityBase({ license: "https://example.com/license" }));
 rejects("http repository", communityBase({ repository: "http://github.com/someone/my-addon" }));
+rejects("non-https support URL", communityBase({ supportUrl: "http://example.com/x" }));
 rejects(
   "repository URL with embedded credentials",
   communityBase({ repository: "https://user:pass@github.com/someone/my-addon" }),
@@ -126,11 +127,20 @@ rejects("backtick in name", communityBase({ name: "My `code` addon" }));
 // --- regression: valid HTTPS shapes must be accepted (review finding P2) ---
 accepts("query-only URL", communityBase({ supportUrl: "https://example.com?section=support" }));
 accepts("fragment-only URL", communityBase({ supportUrl: "https://example.com#privacy" }));
-accepts("port in URL", communityBase({ repository: "https://example.com:8443/repo" }));
+accepts("port in URL", communityBase({ supportUrl: "https://example.com:8443/support" }));
 rejects("credentials survive the looser pattern", communityBase({
-  repository: "https://user:pass@example.com/x",
+  supportUrl: "https://user:pass@example.com/x",
 }));
-rejects("http survives the looser pattern", communityBase({ repository: "http://example.com/x" }));
+rejects("http survives the looser pattern", communityBase({ supportUrl: "http://example.com/x" }));
+
+// --- regression: repository links cannot smuggle a second link (review P2) ---
+rejects("repository URL with a markdown-breaking fragment", communityBase({
+  repository: "https://github.com/owner/repo#)](https://evil.example)",
+}));
+rejects("repository URL with a query", communityBase({ repository: "https://github.com/o/r?a=b" }));
+rejects("non-GitHub repository", communityBase({ repository: "https://gitlab.com/o/r" }));
+rejects("repository deep link", communityBase({ repository: "https://github.com/o/r/tree/main" }));
+accepts("canonical GitHub repository", communityBase({ repository: "https://github.com/o/r" }));
 
 // --- notice taxonomy --------------------------------------------------------
 expect(

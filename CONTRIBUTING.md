@@ -58,25 +58,29 @@ your declaration.
 | Last updated | Your repository's last push |
 | Standard notices | Your `tags`, via [`scripts/lib/notices.mjs`](scripts/lib/notices.mjs) |
 
-Data handling is derived rather than declared because it is **enforced**: under
-the 3.6+ sandbox an addon with no `network` permission cannot make outbound
-requests at all. Direct browser requests are blocked and the broker refuses
-undeclared hosts. That is a stronger statement than any promise in a JSON file.
+Data handling is derived rather than declared because for a 3.6+ addon it is
+**enforced**: without the `network` permission the runtime blocks outbound
+requests, and with it the broker allows only the declared hosts. That is a
+stronger statement than any promise in a JSON file.
+
+The guarantee does not reach backwards. An addon built before 3.6 ran on a host
+where `fetch` worked, so a missing permission proves nothing — and Wealthfolio
+will not claim your addon keeps data local when it cannot tell.
 
 A listing **cannot become `active`** while:
 
 - the repository has no detectable licence — without one, users have no legal
   right to use your addon;
 - there is no readable `manifest.json` at the repository root;
-- the manifest's `sdkVersion` is below 3.0, which the current runtime cannot
-  load.
+- the manifest predates SDK 3.6 **and** you have not declared `dataHandling`
+  yourself.
 
-A manifest built before SDK 3.6 is published with a caution rather than blocked.
+SDK age alone never blocks a listing; it shows as a caution. What blocks is a
+page that cannot say where a user's data goes.
 
-If the manifest cannot express something users should know before installing —
-a companion service, a feature that reads data from somewhere unusual — add the
-optional `dataHandling` block and a `privacyUrl`. Anything sent off the device
-needs both.
+If your manifest predates 3.6, or cannot express something users should know —
+a companion service, a feature reading data from somewhere unusual — add the
+`dataHandling` block. Anything leaving the device also needs a `privacyUrl`.
 
 These declarations are informational. The permission dialog Wealthfolio shows
 at install time is the authoritative permission surface.
