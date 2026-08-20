@@ -26,63 +26,60 @@ Start from:
 templates/community-directory-addon/addon.store.json
 ```
 
-Your listing needs all of this before it can be published:
+Your listing is short, because Wealthfolio verifies what it can rather than
+asking you to retype it:
 
 - `name`, `description` (plain text), `author` naming the **publisher**
-- `repository` — public, HTTPS
-- `supportUrl` — where users report problems to you
-- `license` — SPDX identifier matching the licence in your repository
-- `minWealthfolioVersion` — the lowest version you declare support for
+- `repository` — public, HTTPS, on GitHub
+- `tags`
 - `commercialModel` — `free`, `paid`, `subscription`, or
   `external-service-required`
-- `dataHandling` — see below
-- `notices` — the standard notices your category requires
 
-The pull request template contains the publisher attestation. Fill it in;
-listings are not merged without it.
+That last one is the only disclosure you have to make, because no repository
+reveals what an addon costs. (`external-service-required` means the addon needs
+an account somewhere else; it says nothing about whether that service is free.)
 
-### Declaring data handling
+The pull request template contains the publisher attestation — that you are the
+publisher, that you have the rights to what you submitted, and that nothing is
+hidden. Fill it in; listings are not merged without it.
 
-```json
-{
-  "dataHandling": {
-    "leavesDevice": false,
-    "dataTypes": ["holdings", "transactions"],
-    "externalServices": []
-  }
-}
-```
+### What Wealthfolio derives, and what it blocks
 
-If **anything** leaves the user's device — an API call, a webhook, telemetry,
-an import from a third-party service — then `leavesDevice` is `true`, every
-recipient goes in `externalServices`, and you must provide a `privacyUrl`:
+`pnpm derive:community` reads your repository and records the result in
+[`community/derived.json`](community/derived.json), with the commit it came
+from. The website shows these as *derived*, attributed and dated — never as
+your declaration.
 
-```json
-{
-  "privacyUrl": "https://example.com/privacy",
-  "dataHandling": {
-    "leavesDevice": true,
-    "dataTypes": ["accounts", "account-balances", "transactions"],
-    "externalServices": [{ "name": "Example Sync", "url": "https://example.com" }]
-  }
-}
-```
+| Derived | From |
+| --- | --- |
+| Licence | The SPDX licence GitHub detects in your repository |
+| Data handling | Your manifest's `network` permission and `allowedHosts` |
+| Compatibility | Your manifest's `sdkVersion` |
+| Last updated | Your repository's last push |
+| Standard notices | Your `tags`, via [`scripts/lib/notices.mjs`](scripts/lib/notices.mjs) |
+
+Data handling is derived rather than declared because it is **enforced**: under
+the 3.6+ sandbox an addon with no `network` permission cannot make outbound
+requests at all. Direct browser requests are blocked and the broker refuses
+undeclared hosts. That is a stronger statement than any promise in a JSON file.
+
+A listing **cannot become `active`** while:
+
+- the repository has no detectable licence — without one, users have no legal
+  right to use your addon;
+- there is no readable `manifest.json` at the repository root;
+- the manifest's `sdkVersion` is below 3.0, which the current runtime cannot
+  load.
+
+A manifest built before SDK 3.6 is published with a caution rather than blocked.
+
+If the manifest cannot express something users should know before installing —
+a companion service, a feature that reads data from somewhere unusual — add the
+optional `dataHandling` block and a `privacyUrl`. Anything sent off the device
+needs both.
 
 These declarations are informational. The permission dialog Wealthfolio shows
 at install time is the authoritative permission surface.
-
-### Standard notices
-
-Pick from the fixed list; the website renders the wording.
-
-| Notice | Required for tags such as |
-| --- | --- |
-| `not-tax-advice` | `tax`, `taxes`, `cgt`, `capital-gains`, `wealth-tax` |
-| `not-investment-advice` | `rebalancing`, `strategy`, `allocation`, `trading`, `screener` |
-| `not-financial-advice` | `planning`, `projections`, `retirement`, `forecast` |
-
-The full mapping lives in [`scripts/lib/notices.mjs`](scripts/lib/notices.mjs)
-and is enforced in CI.
 
 ## 2. Official addon source
 
@@ -132,6 +129,10 @@ pnpm test:schema
 pnpm validate:addons
 pnpm generate
 ```
+
+Validation works offline against the committed `community/derived.json`. A
+maintainer refreshes that file with `pnpm derive:community`, which is the only
+step that talks to GitHub.
 
 `pnpm generate` rewrites `community/README.md` and `official/README.md`; commit
 the result, because CI fails on a diff.

@@ -12,6 +12,7 @@
     "bundle:official": "pnpm -r --filter './official/*' bundle",
     "type-check:official": "pnpm -r --filter './official/*' type-check",
     "validate:addons": "node scripts/validate-addons.mjs",
+    "derive:community": "node scripts/derive-community.mjs",
     "test:schema": "node scripts/test-schema.mjs",
     "release:official": "node scripts/release-official.mjs",
     "generate:readme": "node scripts/generate-readme.mjs",

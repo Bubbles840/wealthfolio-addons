@@ -1,10 +1,11 @@
 import path from "node:path";
 import { existsSync, statSync } from "node:fs";
-import { getAddonRecords, repoRoot } from "./lib/addon-records.mjs";
+import { getAddonRecords, readJson, repoRoot } from "./lib/addon-records.mjs";
 import { createStoreValidator, formatSchemaErrors } from "./lib/schema.mjs";
 import { inspectImage } from "./lib/images.mjs";
 import { requiredNotices } from "./lib/notices.mjs";
 import { downloadUrl, r2Key } from "./lib/distribution.mjs";
+import { blockingProblems } from "./lib/derive.mjs";
 
 const MAX_MEDIA_BYTES = 2 * 1024 * 1024;
 const MIN_MEDIA_WIDTH = 800;
@@ -15,6 +16,14 @@ const ALLOWED_MEDIA_EXTENSIONS = new Map([
 
 const records = await getAddonRecords();
 const validateStore = await createStoreValidator();
+
+// Derived facts are read from the committed file, never fetched here: metadata
+// validation must work offline and must not depend on third-party repositories
+// being reachable. Refresh the file with `pnpm derive:community`.
+const derivedPath = path.join(repoRoot, "community/derived.json");
+const derived = existsSync(derivedPath)
+  ? (await readJson(derivedPath)).addons ?? {}
+  : {};
 const ids = new Map();
 const errors = [];
 const warnings = [];
@@ -88,19 +97,46 @@ function validateDistribution(record) {
   }
 }
 
-function validateNotices(record) {
+/**
+ * A community listing goes public on facts Wealthfolio verified, so it cannot
+ * be `active` until those facts exist and are clean.
+ */
+function validateDerived(record) {
   const { metadata } = record;
-  if (metadata.trust !== "community" || metadata.status !== "active") {
+  if (metadata.trust !== "community") return;
+
+  const entry = derived[metadata.id];
+  const prefix = `${record.relativePath}`;
+
+  if (!entry) {
+    if (metadata.status === "active") {
+      errors.push(
+        `${prefix}: no derived record; run pnpm derive:community before publishing this listing`,
+      );
+    }
     return;
   }
 
-  const declared = new Set(metadata.notices ?? []);
-  for (const notice of requiredNotices(metadata.tags)) {
-    if (!declared.has(notice)) {
-      errors.push(
-        `${record.relativePath}: tags require the "${notice}" notice; add it to "notices"`,
-      );
+  if (entry.repository !== metadata.repository) {
+    errors.push(
+      `${prefix}: derived record is stale (repository changed); run pnpm derive:community`,
+    );
+    return;
+  }
+
+  const blocking = blockingProblems(entry);
+  if (metadata.status === "active" && blocking.length) {
+    for (const problem of blocking) {
+      errors.push(`${prefix}: cannot publish — ${problem}`);
     }
+  }
+
+  for (const warning of entry.warnings ?? []) {
+    warnings.push(`${prefix}: ${warning}`);
+  }
+
+  if (metadata.status === "active" && entry.compatibility?.state === "outdated") {
+    warnings.push(`${prefix}: ${entry.compatibility.detail}`);
   }
 }
 
@@ -277,7 +313,7 @@ for (const record of records) {
 
   validateDistribution(record);
   validateUrls(record);
-  validateNotices(record);
+  validateDerived(record);
   validateMedia(record);
   validateBranding(record);
 

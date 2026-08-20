@@ -1,13 +1,25 @@
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
+import { existsSync } from "node:fs";
 import {
   authorName,
   description,
   displayName,
   getAddonRecords,
   releaseVersion,
+  readJson,
   repoRoot,
 } from "./lib/addon-records.mjs";
+
+const derivedPath = path.join(repoRoot, "community/derived.json");
+const derived = existsSync(derivedPath) ? (await readJson(derivedPath)).addons ?? {} : {};
+
+const COMPATIBILITY_LABEL = {
+  ok: "current",
+  legacy: "older SDK",
+  outdated: "will not load",
+  unknown: "unknown",
+};
 
 /**
  * Publisher-supplied text lands in a Markdown table. The schema already forbids
@@ -24,8 +36,10 @@ function cell(value) {
 
 function communityRow(record) {
   const metadata = record.metadata;
+  const facts = derived[metadata.id] ?? {};
   const repo = metadata.repository ? `[Repo](${metadata.repository})` : "";
-  return `| ${cell(displayName(record))} | ${cell(authorName(metadata.author))} | ${cell(description(record))} | ${cell(metadata.status)} | ${repo} |`;
+  const compatibility = COMPATIBILITY_LABEL[facts.compatibility?.state] ?? "unknown";
+  return `| ${cell(displayName(record))} | ${cell(authorName(metadata.author))} | ${cell(metadata.status)} | ${cell(facts.license ?? "none")} | ${cell(compatibility)} | ${repo} |`;
 }
 
 function officialRow(record) {
@@ -38,7 +52,7 @@ const official = records.filter((record) => record.metadata.trust === "official"
 const community = records.filter((record) => record.metadata.trust === "community");
 
 const communityHeader =
-  "| Addon | Publisher | Description | Status | Repo |\n| --- | --- | --- | --- | --- |";
+  "| Addon | Publisher | Status | Licence | Runtime | Repo |\n| --- | --- | --- | --- | --- | --- |";
 const officialHeader =
   "| Addon | Description | Status | Version |\n| --- | --- | --- | --- |";
 
@@ -57,9 +71,12 @@ Listing requirements and the publisher attestation are in
 ${communityHeader}
 ${community.map(communityRow).join("\n")}
 
-Status meanings are in [CONTRIBUTING.md](../CONTRIBUTING.md#status-values).
-Only \`active\` entries appear on [wealthfolio.app/addons/community](https://wealthfolio.app/addons/community);
-\`pending\` entries are waiting on confirmation from their publisher.
+Licence and runtime are **derived** from each publisher's repository, not
+declared here — see [community/derived.json](derived.json), refreshed with
+\`pnpm derive:community\`. Only \`active\` entries appear on
+[wealthfolio.app/addons/community](https://wealthfolio.app/addons/community); a
+listing cannot become active while its repository has no licence or its addon
+cannot load on the current runtime.
 `,
 );
 

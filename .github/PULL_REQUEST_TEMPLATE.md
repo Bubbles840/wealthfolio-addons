@@ -23,14 +23,15 @@ I have read [POLICIES.md](https://github.com/wealthfolio/wealthfolio-addons/blob
 - [ ] I have the rights to the name, description, logo, and screenshots I
       submitted, and I grant Wealthfolio permission to display them for this
       listing.
-- [ ] The source repository is public and licensed under the SPDX licence I
-      declared in `license`.
-- [ ] Everything I declared is accurate — features, compatibility, external
-      services, and what happens to user data.
-- [ ] There is no hidden data collection and no undisclosed remote code. Every
-      service that receives user data is listed in
-      `dataHandling.externalServices`, and `dataHandling.leavesDevice` is `true`
-      if anything leaves the device (with a `privacyUrl`).
+- [ ] The source repository is public and contains a licence file. (Wealthfolio
+      reads the licence from the repository; a listing without a detectable one
+      cannot be published.)
+- [ ] Everything I declared is accurate — features, external services, and what
+      happens to user data.
+- [ ] There is no hidden data collection and no undisclosed remote code. My
+      manifest declares every host the addon reaches, and anything reaching a
+      service the manifest cannot show is declared in `dataHandling` with a
+      `privacyUrl`.
 - [ ] I am responsible for support, updates, security fixes, privacy compliance,
       licensing, and any commercial terms for this addon.
 - [ ] The name and branding do not imply the addon is official, endorsed, or
@@ -43,11 +44,9 @@ I have read [POLICIES.md](https://github.com/wealthfolio/wealthfolio-addons/blob
 
 - [ ] File is at `community/directory/<addon-id>/addon.store.json`, and the
       directory name matches the `id`.
-- [ ] `license`, `supportUrl`, `minWealthfolioVersion`, `commercialModel`,
-      `dataHandling`, and `notices` are filled in.
-- [ ] `notices` includes every notice required by the addon's `tags`
-      (tax → `not-tax-advice`, strategy/rebalancing → `not-investment-advice`,
-      planning/projections → `not-financial-advice`).
+- [ ] `commercialModel` is set. Licence, data handling, compatibility, and
+      standard notices are derived from the repository — do not fill them in.
+- [ ] The repository has a licence file and a `manifest.json` at its root.
 - [ ] All URLs are HTTPS and resolve.
 - [ ] `pnpm validate:addons` and `pnpm generate` pass locally with no diff.
 

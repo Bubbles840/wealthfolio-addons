@@ -10,15 +10,6 @@
   "trust": "community",
   "status": "active",
   "tags": ["planning"],
-  "repository": "https://github.com/username/my-addon",
-  "supportUrl": "https://github.com/username/my-addon/issues",
-  "license": "MIT",
-  "minWealthfolioVersion": "3.7.0",
   "commercialModel": "free",
-  "notices": ["not-financial-advice"],
-  "dataHandling": {
-    "leavesDevice": false,
-    "dataTypes": ["holdings", "transactions"],
-    "externalServices": []
-  }
+  "repository": "https://github.com/username/my-addon"
 }

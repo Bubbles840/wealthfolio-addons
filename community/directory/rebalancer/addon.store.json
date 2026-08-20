@@ -1,6 +1,6 @@
 {
   "$schema": "../../../schemas/addon-store.schema.json",
-  "id": "wealthfolio-rebalancer",
+  "id": "rebalancer",
   "name": "Wealthfolio Rebalancer",
   "description": "Portfolio rebalancing addon for target allocations and long-term portfolio planning.",
   "author": {

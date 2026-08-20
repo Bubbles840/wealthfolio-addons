@@ -99,7 +99,7 @@
       "$ref": "#/$defs/httpsUrl"
     },
     "license": {
-      "description": "SPDX identifier of the license the published source is available under.",
+      "description": "Optional override. Normally detected from the repository and recorded in community/derived.json.",
       "enum": [
         "AGPL-3.0-only",
         "AGPL-3.0-or-later",
@@ -125,15 +125,15 @@
       ]
     },
     "minWealthfolioVersion": {
-      "description": "Lowest Wealthfolio version the publisher declares the addon works with. Declared by the publisher; not tested by Wealthfolio.",
+      "description": "Optional override. Normally read from the addon manifest and recorded in community/derived.json.",
       "$ref": "#/$defs/semver"
     },
     "commercialModel": {
-      "description": "external-service-required does not imply the required service is free.",
+      "description": "The one fact no repository reveals. external-service-required does not imply the required service is free.",
       "enum": ["free", "paid", "subscription", "external-service-required"]
     },
     "notices": {
-      "description": "Standard notices the website renders. Publishers select from this list; they do not write custom disclaimer copy.",
+      "description": "Derived from tags by scripts/lib/notices.mjs. Listed here only to add a notice the tags do not imply.",
       "type": "array",
       "maxItems": 3,
       "uniqueItems": true,
@@ -142,35 +142,14 @@
       }
     },
     "dataHandling": {
-      "description": "Publisher declaration about what the addon does with portfolio data. Informational only: the Wealthfolio install dialog remains the authoritative permission surface.",
+      "description": "Optional publisher clarification, for anything the manifest cannot express. Licence, network access, and compatibility are derived from the repository instead (community/derived.json); the install dialog remains the authoritative permission surface.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["leavesDevice", "dataTypes", "externalServices"],
+      "required": ["leavesDevice", "externalServices"],
       "properties": {
         "leavesDevice": {
           "description": "true when any data is sent off the user's device for any reason.",
           "type": "boolean"
-        },
-        "dataTypes": {
-          "type": "array",
-          "maxItems": 12,
-          "uniqueItems": true,
-          "items": {
-            "enum": [
-              "accounts",
-              "account-balances",
-              "holdings",
-              "transactions",
-              "activities",
-              "performance-metrics",
-              "goals",
-              "symbols-quotes",
-              "market-data",
-              "api-credentials",
-              "personal-identifiers",
-              "other"
-            ]
-          }
         },
         "externalServices": {
           "type": "array",
@@ -316,14 +295,7 @@
         "required": ["trust", "status"]
       },
       "then": {
-        "required": [
-          "license",
-          "supportUrl",
-          "minWealthfolioVersion",
-          "commercialModel",
-          "dataHandling",
-          "notices"
-        ]
+        "required": ["commercialModel"]
       }
     },
     {

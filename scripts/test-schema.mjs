@@ -30,12 +30,7 @@ function communityBase(overrides = {}) {
     status: "active",
     tags: ["analytics"],
     repository: "https://github.com/someone/my-addon",
-    supportUrl: "https://github.com/someone/my-addon/issues",
-    license: "MIT",
-    minWealthfolioVersion: "3.7.0",
     commercialModel: "free",
-    notices: [],
-    dataHandling: { leavesDevice: false, dataTypes: ["holdings"], externalServices: [] },
     ...overrides,
   };
 }
@@ -65,27 +60,26 @@ function rejects(name, value) {
 accepts("valid community entry", communityBase());
 accepts("valid official entry", officialBase());
 accepts(
-  "pending community entry may omit the disclosure model",
-  communityBase({
-    status: "pending",
-    license: undefined,
-    supportUrl: undefined,
-    minWealthfolioVersion: undefined,
-    commercialModel: undefined,
-    notices: undefined,
-    dataHandling: undefined,
-  }),
+  "pending community entry may omit even the commercial model",
+  communityBase({ status: "pending", commercialModel: undefined }),
 );
 accepts(
-  "external service with privacyUrl",
+  "optional publisher clarification is still allowed",
   communityBase({
     privacyUrl: "https://example.com/privacy",
+    license: "MIT",
+    supportUrl: "https://example.com/support",
+    minWealthfolioVersion: "3.7.0",
+    notices: ["not-tax-advice"],
     dataHandling: {
       leavesDevice: true,
-      dataTypes: ["holdings"],
       externalServices: [{ name: "Example", url: "https://example.com" }],
     },
   }),
+);
+rejects(
+  "active community entry without a commercial model",
+  communityBase({ commercialModel: undefined }),
 );
 
 // --- rejected ---------------------------------------------------------------
@@ -96,25 +90,15 @@ rejects("community entry claiming a Wealthfolio-hosted artifact", communityBase(
 rejects("official entry without distribution", officialBase({ distribution: undefined }));
 rejects("official entry without media", officialBase({ media: undefined }));
 rejects("official entry without release", officialBase({ release: undefined }));
-rejects("active community entry without license", communityBase({ license: undefined }));
-rejects("active community entry without dataHandling", communityBase({ dataHandling: undefined }));
-rejects(
-  "active community entry without commercialModel",
-  communityBase({ commercialModel: undefined }),
-);
-rejects("active community entry without supportUrl", communityBase({ supportUrl: undefined }));
 rejects(
   "leavesDevice true without privacyUrl",
-  communityBase({
-    dataHandling: { leavesDevice: true, dataTypes: ["holdings"], externalServices: [] },
-  }),
+  communityBase({ dataHandling: { leavesDevice: true, externalServices: [] } }),
 );
 rejects(
   "externalServices declared while leavesDevice is false",
   communityBase({
     dataHandling: {
       leavesDevice: false,
-      dataTypes: ["holdings"],
       externalServices: [{ name: "Example", url: "https://example.com" }],
     },
   }),
@@ -126,9 +110,6 @@ rejects(
   communityBase({ repository: "https://user:pass@github.com/someone/my-addon" }),
 );
 rejects("unknown notice", communityBase({ notices: ["not-legal-advice"] }));
-rejects("unknown data type", communityBase({
-  dataHandling: { leavesDevice: false, dataTypes: ["everything"], externalServices: [] },
-}));
 rejects("unknown top-level field", communityBase({ downloadUrl: "https://example.com/a.zip" }));
 rejects("unknown trust tier", communityBase({ trust: "verified" }));
 

@@ -37,14 +37,15 @@ By opening a pull request that adds or changes a listing, you confirm that:
 3. **You grant Wealthfolio permission** to reproduce, resize, and display the
    name, description, logo, and screenshots you submit, in order to show the
    listing on the website and in Wealthfolio's own materials.
-4. **The source repository is public and clearly licensed** under the OSI/SPDX
-   licence you declared in `license`.
-5. **Your claims are accurate** — features, the Wealthfolio versions you
-   declare compatibility with, external services, and what happens to user data.
-6. **There is no hidden data collection and no undisclosed remote code.** Every
-   external service that receives user data is declared in
-   `dataHandling.externalServices`, and anything that leaves the device is
-   declared with `dataHandling.leavesDevice: true` plus a privacy policy URL.
+4. **The source repository is public and carries a licence file.** Wealthfolio
+   reads the licence from the repository; a listing without a detectable one
+   cannot be published.
+5. **Your claims are accurate** — features, external services, and what happens
+   to user data. Compatibility is read from your manifest, not taken on trust.
+6. **There is no hidden data collection and no undisclosed remote code.** Your
+   manifest declares every host the addon reaches. If user data reaches anything
+   the manifest cannot show — a companion app or service — say so in the
+   optional `dataHandling` block with a privacy policy URL.
 7. **You own the addon**: support, updates, security fixes, privacy compliance,
    licensing, commercial terms, refunds, and any dispute with a user are yours,
    not Wealthfolio's.
@@ -65,31 +66,44 @@ Follow the [Wealthfolio trademark policy](https://github.com/wealthfolio/wealthf
 
 ## Required metadata
 
-Every listing that appears publicly (`"status": "active"`) declares:
+Wealthfolio verifies what it can rather than asking you to retype it, so a
+listing declares very little:
 
 | Field | Meaning |
 | --- | --- |
-| `license` | SPDX identifier of the published source licence |
-| `repository` | Public source repository (HTTPS) |
-| `supportUrl` | Where users report problems to **you** |
-| `minWealthfolioVersion` | Lowest Wealthfolio version you declare support for |
+| `name`, `description`, `author` | The addon and the publisher responsible for it |
+| `repository` | Public GitHub source repository (HTTPS) |
+| `tags` | Categories, which also determine the standard notices |
 | `commercialModel` | `free`, `paid`, `subscription`, or `external-service-required` |
-| `dataHandling.leavesDevice` | `true` if any data leaves the user's device, for any reason |
-| `dataHandling.dataTypes` | What portfolio data the addon reads |
-| `dataHandling.externalServices` | Every third-party service that receives data |
-| `privacyUrl` | Required whenever `leavesDevice` is `true` |
-| `notices` | Standard notices for the addon's category |
 
-`external-service-required` means the addon needs an account or API somewhere
-else. It does not say whether that service is free.
+`commercialModel` is the only disclosure required, because no repository reveals
+what an addon costs. `external-service-required` means the addon needs an
+account somewhere else; it does not say whether that service is free.
 
-Entries submitted without this information stay `"status": "pending"` and are
-not published on the website until the publisher confirms them.
+Licence, data handling, compatibility, and last-updated are **derived** from the
+publisher's repository, recorded with the commit they came from, and displayed
+as derived — attributed and dated, never as the publisher's declaration.
+
+Data handling is derived because it is enforced: under the 3.6+ sandbox an addon
+with no `network` permission cannot make outbound requests, and one that has it
+can only reach the hosts it declared and the user approved. That is stronger
+than any promise in a metadata file.
+
+A listing cannot be published while its repository has no detectable licence
+(without one, users have no legal right to use the addon), while it has no
+readable manifest, or while its addon is built against an SDK the current
+runtime cannot load. These are the publisher's to fix, and Wealthfolio will say
+exactly which applies.
+
+If something users should know before installing cannot be seen in the manifest
+— a companion service, an unusual data source — declare it in the optional
+`dataHandling` block with a `privacyUrl`.
 
 ## Standard notices
 
-Some categories always carry a notice. You choose from the list; the website
-renders the wording, so publishers never write their own disclaimer copy.
+Some categories always carry a notice. These follow from your `tags` — you do
+not select them — and the website renders the wording, so publishers never write
+their own disclaimer copy.
 
 | Notice | Applies to |
 | --- | --- |
@@ -97,8 +111,8 @@ renders the wording, so publishers never write their own disclaimer copy.
 | `not-investment-advice` | Rebalancing, allocation, strategy, screening, trading |
 | `not-financial-advice` | Financial planning, projections, retirement, forecasts |
 
-Continuous integration enforces the mapping from your `tags`, so a tax addon
-cannot be published without the tax notice.
+The mapping is applied automatically, so a tax addon always carries the tax
+notice.
 
 ## What gets a listing removed
 

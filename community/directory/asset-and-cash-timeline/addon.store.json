@@ -1,6 +1,6 @@
 {
   "$schema": "../../../schemas/addon-store.schema.json",
-  "id": "asset-amount-cash-timeline",
+  "id": "asset-and-cash-timeline",
   "name": "Asset Amount & Cash Timeline",
   "description": "Tracks cash balance and asset accumulation over time with transaction-level insights and holding timelines.",
   "author": {
