@@ -55,18 +55,28 @@ for (const record of records) {
   }
 }
 
-const output = {
-  // Derived from publisher repositories. Regenerate with: pnpm derive:community
-  generatedAt: new Date().toISOString(),
-  addons: Object.fromEntries(Object.keys(addons).sort().map((id) => [id, addons[id]])),
-};
+const sortedAddons = Object.fromEntries(
+  Object.keys(addons).sort().map((id) => [id, addons[id]]),
+);
 
 function comparable(document) {
   return JSON.stringify({ addons: document.addons ?? {} });
 }
 
+const unchanged = comparable(previous) === comparable({ addons: sortedAddons });
+
+const output = {
+  // Derived from publisher repositories. Regenerate with: pnpm derive:community
+  //
+  // The timestamp only moves when the facts do, so a scheduled refresh that
+  // finds nothing new produces no diff — and an empty pull request never gets
+  // opened for someone to review.
+  generatedAt: unchanged && previous.generatedAt ? previous.generatedAt : new Date().toISOString(),
+  addons: sortedAddons,
+};
+
 if (checkOnly) {
-  if (comparable(previous) !== comparable(output)) {
+  if (!unchanged) {
     console.error(
       "error: community/derived.json is stale. Run: pnpm derive:community",
     );

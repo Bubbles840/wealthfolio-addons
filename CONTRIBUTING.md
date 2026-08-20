@@ -134,9 +134,23 @@ pnpm validate:addons
 pnpm generate
 ```
 
-Validation works offline against the committed `community/derived.json`. A
-maintainer refreshes that file with `pnpm derive:community`, which is the only
-step that talks to GitHub.
+Validation works offline against the committed `community/derived.json`, so a
+pull request never fails because someone else's repository is unreachable, and
+the same commit validates the same way months later.
+
+Reading the outside world is a separate job:
+
+| Step | When | Network |
+| --- | --- | --- |
+| `pnpm validate:addons` | every pull request | no |
+| `pnpm derive:community` | when a maintainer adds or updates a listing | yes |
+| `.github/workflows/refresh-derived.yml` | weekly, automatically | yes |
+
+The weekly job re-reads every publisher repository and opens a pull request if
+anything moved — a licence added or removed, a repository renamed, an addon
+rebuilt. So a listing you fix does not stay blocked because nobody re-ran a
+command, and a listing that stops qualifying does not stay published on stale
+facts.
 
 `pnpm generate` rewrites `community/README.md` and `official/README.md`; commit
 the result, because CI fails on a diff.
