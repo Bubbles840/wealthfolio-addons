@@ -20,5 +20,23 @@
   ],
   "commercialModel": "external-service-required",
   "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
-  "supportUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/issues"
+  "supportUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/issues",
+  "privacyUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/blob/main/PRIVACY.md",
+  "dataHandling": {
+    "leavesDevice": true,
+    "externalServices": [
+      {
+        "name": "SimpleFIN Bridge, which supplies the transactions",
+        "url": "https://www.simplefin.org/"
+      },
+      {
+        "name": "Telegram, if you enable notifications",
+        "url": "https://telegram.org/privacy"
+      },
+      {
+        "name": "Your mail provider, read by the companion container",
+        "url": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/blob/main/PRIVACY.md"
+      }
+    ]
+  }
 }
